@@ -4,7 +4,7 @@ import React from "react";
 
 const Navigator: React.FC = () => {
   return (
-    <div className="flex h-[60px] flex-row items-center gap-4 rounded-2xl bg-white shadow-md">
+    <div className="flex h-[60px] flex-row items-center gap-4 rounded-2xl bg-white shadow-sm">
       <div>
         <Image
           src={CompanyLogo}

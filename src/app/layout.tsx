@@ -1,3 +1,4 @@
+import { Navigator, Profile } from "@/components";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -13,7 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#FAFCFD]">{children}</body>
+      <body className="bg-[#FAFCFD]">
+        <div className="pr- mx-8 my-16 flex flex-row justify-between px-[131px]">
+          <Navigator />
+          <Profile />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
