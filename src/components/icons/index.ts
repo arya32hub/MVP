@@ -1,1 +1,2 @@
-export * as Icons from "./Checkbox";
+export * as Bookmark from "./Bookmark";
+export * as Checkbox from "./Checkbox";
