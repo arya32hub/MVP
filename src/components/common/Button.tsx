@@ -71,6 +71,19 @@ const PrimarySmall: React.FC<PropsWithChildren & IClassNameProps> = ({
   );
 };
 
+const PrimarySmallLight: React.FC<PropsWithChildren & IClassNameProps> = ({
+  children,
+  className,
+}) => {
+  return (
+    <SmallBase
+      className={`border-mountain-lake bg-mountain-lake text-white ${className}`}
+    >
+      <Text.BodyMedium className="text-white">{children}</Text.BodyMedium>
+    </SmallBase>
+  );
+};
+
 const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
   children,
   className,
@@ -78,6 +91,19 @@ const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
   return (
     <BigBase
       className={`bg-main-blue border-main-blue h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
+    >
+      <BodyMedium className="text-white">{children}</BodyMedium>
+    </BigBase>
+  );
+};
+
+const PrimaryBigLight: React.FC<PropsWithChildren & IClassNameProps> = ({
+  children,
+  className,
+}) => {
+  return (
+    <BigBase
+      className={`bg-mountain-lake border-mountain-lake h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
     >
       <BodyMedium className="text-white">{children}</BodyMedium>
     </BigBase>
@@ -146,7 +172,9 @@ export {
   IceCube,
   Primary,
   PrimaryBig,
+  PrimaryBigLight,
   PrimarySmall,
+  PrimarySmallLight,
   Secondary,
   SecondaryBig,
   SecondarySmall,

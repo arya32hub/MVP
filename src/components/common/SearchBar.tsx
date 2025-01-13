@@ -1,17 +1,17 @@
-import { RightArrow } from "@/assets/svg";
-import Image from "next/image";
-import { PropsWithChildren } from "react";
+import { ComponentType, PropsWithChildren } from "react";
+import { Button } from ".";
+import { Icons } from "..";
 
 interface IProps {
   placeHolder: string;
 }
 
-interface IColorProps {
-  color: string;
+interface ISearchButton {
+  SearchButton: ComponentType;
 }
-const SearchFieldBase: React.FC<IProps & IColorProps> = ({
-  color,
+const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
   placeHolder,
+  SearchButton,
 }) => {
   return (
     <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] pl-4">
@@ -20,21 +20,31 @@ const SearchFieldBase: React.FC<IProps & IColorProps> = ({
         type="text"
         placeholder={placeHolder}
       />
-      <div
-        className={`m-[6px] flex h-[42px] w-[92px] items-center justify-center rounded-[10px] bg-[${color}]`}
-      >
-        <Image src={RightArrow} alt={"Search Button"} className="h-6 w-6" />
-      </div>
+      <SearchButton />
     </div>
   );
 };
 
 const MainBlue: React.FC<IProps> = ({ placeHolder }) => {
-  return <SearchFieldBase placeHolder={placeHolder} color={"#00236C"} />;
+  const SeaarchButton = () => (
+    <Button.PrimaryBig className="mr-[6px] w-[92px] items-center justify-center rounded-[10px] px-[38px] py-4">
+      <Icons.RightArrow.White />
+    </Button.PrimaryBig>
+  );
+  return (
+    <SearchFieldBase placeHolder={placeHolder} SearchButton={SeaarchButton} />
+  );
 };
 
 const MountainLake: React.FC<IProps> = ({ placeHolder }) => {
-  return <SearchFieldBase placeHolder={placeHolder} color={"#87AEEE"} />;
+  const SeaarchButton = () => (
+    <Button.PrimaryBigLight className="mr-[6px] w-[92px] items-center justify-center rounded-[10px] px-[38px] py-4">
+      <Icons.RightArrow.Tornado />
+    </Button.PrimaryBigLight>
+  );
+  return (
+    <SearchFieldBase placeHolder={placeHolder} SearchButton={SeaarchButton} />
+  );
 };
 
 type TContainerPros = PropsWithChildren & {
