@@ -1,6 +1,7 @@
-import { CompanyLogoMedium } from "@/assets/svg";
-import { SearchBar } from "@/components";
+import { CompanyLogoMedium, SearchFocus } from "@/assets/svg";
+import { Button, SearchBar } from "@/components";
 import Image from "next/image";
+
 export default function Home() {
   return (
     <div className="mx-16 mb-4 flex flex-col items-center justify-center px-[292px] pt-[118.25px]">
@@ -14,7 +15,10 @@ export default function Home() {
         <div className="font-inter w-full text-center text-[37px] font-medium leading-[44.78px] text-[#333335]">
           What can I help you with?
         </div>
-        <SearchBar />
+        <SearchBar.Container className="mt-6">
+          <Button.IceCube svgLeft={SearchFocus} text={"Advanced Search"} />
+          <SearchBar.MainBlue placeHolder="Type here..." />
+        </SearchBar.Container>
         <div className="mt-4 flex flex-row items-center gap-[26.8px]">
           <div className="items-center font-[Inter] text-sm font-normal leading-4 text-[#98A0B3]">
             Suggested:
