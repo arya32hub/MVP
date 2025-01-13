@@ -15,14 +15,25 @@ const Filter = () => {
       <div className="flex flex-row items-center gap-1">
         <Image src={FilterMailSquare} alt={"filter mail"} />
 
-        <Text.H3 className="my-[2px] items-center">Filter</Text.H3>
+        <Text.H3 className="my-[2px] items-center text-gray-900">
+          Filter
+        </Text.H3>
       </div>
       <div className="mt-5 flex flex-col gap-3">
         <Dropdown text={"Select the region"} svgLeft={Location} />
         <Dropdown text={"Education"} svgLeft={BookOpen} />
       </div>
       <div className="mt-5 border-[1px] border-[#F4F4F4F4]" />
-      <Checkbox.Default />
+      <div className="my-[20px] flex flex-col">
+        <div className="flex flex-row items-center gap-1.5 px-[18px] py-[5.5px]">
+          <Checkbox.Default />
+          <Text.Body className="text-gray-500">Lorem Ipsum</Text.Body>
+        </div>
+        <div className="flex flex-row items-center gap-1.5 px-[18px] py-[5.5px]">
+          <Checkbox.Default />
+          <Text.Body className="text-gray-500">Lorem Ipsum</Text.Body>
+        </div>
+      </div>
 
       <div className="mt-5 border-[1px] border-[#F4F4F4F4]" />
       <div className="mt-5 flex flex-row gap-[10px]">
