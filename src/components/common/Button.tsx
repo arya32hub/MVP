@@ -92,9 +92,9 @@ const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
 }) => {
   return (
     <BigBase
-      className={`bg-main-blue border-main-blue h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
+      className={`bg-main-blue border-main-blue h-[43px] items-center justify-center rounded-lg border-[1px] px-5 py-3 ${className}`}
     >
-      <BodyMedium className="text-white">{children}</BodyMedium>
+      <BodyMedium className="text-center text-white">{children}</BodyMedium>
     </BigBase>
   );
 };

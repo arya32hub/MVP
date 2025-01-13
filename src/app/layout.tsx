@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-[#FAFCFD]">
-        <div className="pr- mx-16 my-16 flex flex-row justify-between px-[131px]">
+        <div className="mx-16 my-16 flex flex-row justify-between px-[131px]">
           <Navigator />
           <Profile />
         </div>
