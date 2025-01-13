@@ -59,7 +59,7 @@ const Container: React.FC<TContainerPros> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col rounded-2xl bg-white p-2 shadow-sm ${className}`}
+      className={`flex flex-col rounded-2xl bg-white p-2 shadow-md ${className}`}
     >
       <div className="flex flex-row">{children}</div>
       {Footer !== undefined ? <Footer /> : <></>}

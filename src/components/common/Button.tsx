@@ -51,9 +51,9 @@ const SecondarySmall: React.FC<PropsWithChildren & IClassNameProps> = ({
 }) => {
   return (
     <SmallBase className={`border-mountain-lake bg-transparent ${className}`}>
-      <Text.BodyMedium className="text-mountain-lake">
+      <Text.BodySmallMedium className="text-mountain-lake">
         {children}
-      </Text.BodyMedium>
+      </Text.BodySmallMedium>
     </SmallBase>
   );
 };
@@ -66,7 +66,9 @@ const PrimarySmall: React.FC<PropsWithChildren & IClassNameProps> = ({
     <SmallBase
       className={`border-main-blue bg-main-blue text-white ${className}`}
     >
-      <Text.BodyMedium className="text-white">{children}</Text.BodyMedium>
+      <Text.BodySmallMedium className="text-white">
+        {children}
+      </Text.BodySmallMedium>
     </SmallBase>
   );
 };
