@@ -1,12 +1,24 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
 import sys
 sys.path.append('..')
 from PeopleSearch import PeopleSearch
 from tiering import tiering
 
+
 app = FastAPI()
 ps = PeopleSearch()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins. Change to specific domains in production.
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all HTTP headers
+)
+
 
 class InputText(BaseModel):
     text: str
