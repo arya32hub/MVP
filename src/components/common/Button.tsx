@@ -92,7 +92,7 @@ const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
 }) => {
   return (
     <BigBase
-      className={`bg-main-blue border-main-blue h-[43px] items-center justify-center rounded-lg border-[1px] px-5 py-3 ${className}`}
+      className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] border-main-blue bg-main-blue px-5 py-3 ${className}`}
     >
       <BodyMedium className="text-center text-white">{children}</BodyMedium>
     </BigBase>
@@ -105,7 +105,7 @@ const PrimaryBigLight: React.FC<PropsWithChildren & IClassNameProps> = ({
 }) => {
   return (
     <BigBase
-      className={`bg-mountain-lake border-mountain-lake h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
+      className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] border-mountain-lake bg-mountain-lake px-3 py-5 ${className}`}
     >
       <BodyMedium className="text-white">{children}</BodyMedium>
     </BigBase>
@@ -118,7 +118,7 @@ const SecondaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
 }) => {
   return (
     <BigBase
-      className={`border-mountain-lake h-[43px] rounded-lg border-[1px] bg-transparent px-3 py-5 ${className}`}
+      className={`h-[43px] rounded-lg border-[1px] border-mountain-lake bg-transparent px-3 py-5 ${className}`}
     >
       <BodyMedium className="text-mountain-lake">{children}</BodyMedium>
     </BigBase>
@@ -158,14 +158,14 @@ const IceCube: React.FC<IProps & ISvgProps> = ({
 }) => {
   return (
     <div
-      className={`flex-2 bg-ice-cube flex h-[54px] flex-row items-center justify-center gap-[11px] rounded-2xl px-[14px] text-sm ${className}`}
+      className={`flex-2 flex h-[54px] flex-row items-center justify-center gap-[11px] rounded-2xl bg-ice-cube px-[14px] text-sm ${className}`}
     >
       {svgLeft !== undefined ? (
         <Image src={svgLeft} alt={"search icon"} width={16.67} height={16.67} />
       ) : (
         <></>
       )}
-      <div className="text-main-blue text-sm font-normal leading-4">{text}</div>
+      <div className="text-sm font-normal leading-4 text-main-blue">{text}</div>
     </div>
   );
 };
