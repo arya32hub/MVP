@@ -5,10 +5,10 @@ import { Button, SearchBar } from "@/components";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function Home() {
+const Home = () => {
   const router = useRouter();
-  const navigateToSearch = () => {
-    router.push("/search");
+  const navigateToSearch = (query?: string) => {
+    router.push(`/search?query=${query}`);
   };
 
   return (
@@ -50,4 +50,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Home;

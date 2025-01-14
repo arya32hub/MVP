@@ -13,8 +13,9 @@ interface IClassNameProps {
   className?: string;
 }
 
+type OnClick = (keyword?: string) => void;
 interface IOnClick {
-  onClick?: () => void;
+  onClick?: OnClick;
 }
 
 interface ISvgProps {
@@ -33,7 +34,9 @@ const SmallBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   return (
     <button
       className={`h-[33px] rounded-lg border-[1px] px-3.5 py-2 ${className}`}
-      onClick={onClick}
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       {children}
     </button>
@@ -48,7 +51,9 @@ const BigBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   return (
     <div
       className={`h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
-      onClick={onClick}
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       {children}
     </div>
@@ -113,13 +118,15 @@ const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   );
 };
 
-const PrimaryBigLight: React.FC<PropsWithChildren & IClassNameProps> = ({
-  children,
-  className,
-}) => {
+const PrimaryBigLight: React.FC<
+  PropsWithChildren & IClassNameProps & IOnClick
+> = ({ children, className, onClick }) => {
   return (
     <BigBase
       className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] border-mountain-lake bg-mountain-lake px-3 py-5 ${className}`}
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       <BodyMedium className="text-white">{children}</BodyMedium>
     </BigBase>
@@ -139,16 +146,20 @@ const SecondaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
   );
 };
 
-const Secondary: React.FC<IProps & IActiveProps> = ({
+const Secondary: React.FC<IProps & IActiveProps & IOnClick> = ({
   text,
   className,
   isActive = true,
+  onClick,
 }) => {
   return (
     <button
       className={`${isActive ? "text-[#87AEEE]" : "text-[#A0AEBC]"} flex flex-1 flex-row items-center justify-center rounded-lg border-[1px] ${
         isActive ? "border-[#87AEEE]" : "border-[#A0AEBC]"
       } px-[14px] py-2 font-[Inter] text-sm font-medium leading-[16.94px] ${className}`}
+      onClick={() => {
+        if (onClick) onClick();
+      }}
     >
       {text}
     </button>
@@ -179,6 +190,7 @@ const IceCube: React.FC<IProps & ISvgProps> = ({
       ) : (
         <></>
       )}
+
       <div className="text-sm font-normal leading-4 text-main-blue">{text}</div>
     </div>
   );

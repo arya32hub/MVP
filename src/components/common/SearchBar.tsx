@@ -1,4 +1,5 @@
-import { ComponentType, PropsWithChildren } from "react";
+"use client";
+import { ComponentType, PropsWithChildren, useState } from "react";
 import { Button } from ".";
 import { Icons } from "..";
 
@@ -7,22 +8,34 @@ interface IProps {
 }
 
 interface IOnClick {
-  onClick?: () => void;
+  onClick?: (text?: string) => void;
 }
 
 interface ISearchButton {
   SearchButton: ComponentType;
 }
-const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
-  placeHolder,
-  SearchButton,
-}) => {
+
+interface IOnChange {
+  onChange?: (text?: string) => void;
+}
+
+interface ISetValue {
+  value?: string;
+}
+
+const SearchFieldBase: React.FC<
+  IProps & ISearchButton & IOnChange & ISetValue
+> = ({ placeHolder, SearchButton, onChange, value }) => {
   return (
     <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] border-gray-200 pl-4">
       <input
         className="flex-1 bg-white px-4 py-2 text-black focus:outline-none"
         type="text"
         placeholder={placeHolder}
+        onChange={(e) => {
+          if (onChange) onChange(e.target.value);
+        }}
+        defaultValue={value}
       />
       <SearchButton />
     </div>
@@ -30,27 +43,53 @@ const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
 };
 
 const MainBlue: React.FC<IProps & IOnClick> = ({ placeHolder, onClick }) => {
+  const [text, setText] = useState<string | undefined>();
+  const handleClick = () => {
+    if (text && onClick) onClick(text);
+  };
   const SeaarchButton = () => (
     <Button.PrimaryBig
       className="mr-[6px] flex w-[92px] flex-row justify-center rounded-[10px]"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <Icons.RightArrow.White />
     </Button.PrimaryBig>
   );
   return (
-    <SearchFieldBase placeHolder={placeHolder} SearchButton={SeaarchButton} />
+    <SearchFieldBase
+      placeHolder={placeHolder}
+      SearchButton={SeaarchButton}
+      value={text}
+      onChange={setText}
+    />
   );
 };
 
-const MountainLake: React.FC<IProps> = ({ placeHolder }) => {
+const MountainLake: React.FC<IProps & IOnClick & ISetValue> = ({
+  placeHolder,
+  onClick,
+  value,
+}) => {
+  const [text, setText] = useState<string | undefined>(value);
+  const handleClick = () => {
+    if (onClick) onClick(text);
+  };
+
   const SeaarchButton = () => (
-    <Button.PrimaryBigLight className="mr-[6px] w-[92px] items-center justify-center rounded-[10px] px-[38px] py-4">
+    <Button.PrimaryBigLight
+      className="mr-[6px] w-[92px] items-center justify-center rounded-[10px] px-[38px] py-4"
+      onClick={handleClick}
+    >
       <Icons.RightArrow.Tornado />
     </Button.PrimaryBigLight>
   );
   return (
-    <SearchFieldBase placeHolder={placeHolder} SearchButton={SeaarchButton} />
+    <SearchFieldBase
+      placeHolder={placeHolder}
+      SearchButton={SeaarchButton}
+      value={text}
+      onChange={setText}
+    />
   );
 };
 

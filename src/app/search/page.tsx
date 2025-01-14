@@ -15,7 +15,7 @@ import {
   Text,
 } from "@/components";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Filter = () => {
   return (
@@ -55,6 +55,9 @@ const Filter = () => {
 };
 
 const SearchSection = () => {
+  const searchParams = useSearchParams();
+
+  const query = searchParams.get("query");
   const Footer: React.FC = () => (
     <div className="mx-[9px] mt-3 flex flex-row items-center justify-between">
       <Checkbox.All isChecked />
@@ -68,13 +71,17 @@ const SearchSection = () => {
   return (
     <SearchBar.Container Footer={Footer}>
       <Button.IceCube svgLeft={SearchFocus} text={"Advanced Search"} />
-      <SearchBar.MountainLake placeHolder="Type here..." />
+      <SearchBar.MountainLake
+        placeHolder="Type here..."
+        value={query !== null ? query : undefined}
+      />
     </SearchBar.Container>
   );
 };
 
 export default function Search() {
   const router = useRouter();
+
   const navigateToCandidateProfile = () => {
     router.push("/candidate-profile");
   };

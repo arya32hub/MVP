@@ -11,9 +11,9 @@ const CheckedBox = () => {
       <path
         d="M4 9L6.5 11.5L12 5.5"
         stroke="white"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -40,7 +40,7 @@ const UncheckAll = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <rect x="0.5" y="0.5" width="15" height="15" rx="3.5" stroke="#A0AEBC" />
-    <path d="M5 8H11" stroke="#A0AEBC" stroke-linecap="round" />
+    <path d="M5 8H11" stroke="#A0AEBC" strokeLinecap="round" />
   </svg>
 );
 
@@ -53,7 +53,7 @@ const CheckAll = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <rect width="16" height="16" rx="4" fill="#00236C" />
-    <path d="M5 8H11" stroke="white" stroke-linecap="round" />
+    <path d="M5 8H11" stroke="white" strokeLinecap="round" />
   </svg>
 );
 
