@@ -14,9 +14,9 @@ const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
   SearchButton,
 }) => {
   return (
-    <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] pl-4">
+    <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] border-gray-200 pl-4">
       <input
-        className="flex-1 px-4 py-2 text-black focus:outline-none"
+        className="text-black bg-white flex-1 px-4 py-2 focus:outline-none"
         type="text"
         placeholder={placeHolder}
       />
@@ -27,7 +27,7 @@ const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
 
 const MainBlue: React.FC<IProps> = ({ placeHolder }) => {
   const SeaarchButton = () => (
-    <Button.PrimaryBig className="mr-[6px] w-[92px] items-center justify-center rounded-[10px] px-[38px] py-4">
+    <Button.PrimaryBig className="mr-[6px] flex w-[92px] flex-row justify-center rounded-[10px]">
       <Icons.RightArrow.White />
     </Button.PrimaryBig>
   );
@@ -59,7 +59,7 @@ const Container: React.FC<TContainerPros> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col rounded-2xl bg-white p-2 shadow-md ${className}`}
+      className={`bg-white flex flex-col rounded-2xl p-2 shadow-md ${className}`}
     >
       <div className="flex flex-row">{children}</div>
       {Footer !== undefined ? <Footer /> : <></>}

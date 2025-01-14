@@ -1,13 +1,13 @@
 const White = () => (
   <svg
-    width="18"
-    height="12"
-    viewBox="0 0 18 12"
+    width="24"
+    height="25"
+    viewBox="0 0 24 25"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M17 5.94016L1 5.94015M17 5.94016C17 7.25815 12 10.9402 12 10.9402M17 5.94016C17 4.62216 12 0.940155 12 0.940155"
+      d="M20 12.9402L4 12.9402M20 12.9402C20 14.2582 15 17.9402 15 17.9402M20 12.9402C20 11.6222 15 7.94015 15 7.94015"
       stroke="white"
       stroke-width="1.5"
       stroke-linecap="round"
