@@ -1,12 +1,20 @@
-import { CompanyLogoMedium, SearchFocus } from "@/assets/svg";
+"use client";
+
+import { SearchFocus } from "@/assets/svg";
 import { Button, SearchBar } from "@/components";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
+  const navigateToSearch = () => {
+    router.push("/search");
+  };
+
   return (
     <div className="mx-16 mb-4 flex flex-col items-center justify-center px-[292px] pt-[118.25px]">
       <Image
-        src={CompanyLogoMedium}
+        src="/public/logo-big.png"
         width={215.53}
         height={104.94}
         alt={"glink logo"}
@@ -17,7 +25,10 @@ export default function Home() {
         </div>
         <SearchBar.Container className="mt-6">
           <Button.IceCube svgLeft={SearchFocus} text={"Advanced Search"} />
-          <SearchBar.MainBlue placeHolder="Type here..." />
+          <SearchBar.MainBlue
+            placeHolder="Type here..."
+            onClick={navigateToSearch}
+          />
         </SearchBar.Container>
         <div className="mt-4 flex flex-row items-center gap-[26.8px]">
           <div className="items-center font-[Inter] text-sm font-normal leading-4 text-[#98A0B3]">

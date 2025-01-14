@@ -13,6 +13,10 @@ interface IClassNameProps {
   className?: string;
 }
 
+interface IOnClick {
+  onClick?: () => void;
+}
+
 interface ISvgProps {
   svgLeft?: string | StaticImport;
 }
@@ -34,12 +38,16 @@ const SmallBase: React.FC<PropsWithChildren & IClassNameProps> = ({
   );
 };
 
-const BigBase: React.FC<PropsWithChildren & IClassNameProps> = ({
+const BigBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
+  onClick,
 }) => {
   return (
-    <div className={`h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}>
+    <div
+      className={`h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
+      onClick={onClick}
+    >
       {children}
     </div>
   );
@@ -86,13 +94,15 @@ const PrimarySmallLight: React.FC<PropsWithChildren & IClassNameProps> = ({
   );
 };
 
-const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps> = ({
+const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
+  onClick,
 }) => {
   return (
     <BigBase
       className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] border-main-blue bg-main-blue px-5 py-3 ${className}`}
+      onClick={onClick}
     >
       <BodyMedium className="text-center text-white">{children}</BodyMedium>
     </BigBase>

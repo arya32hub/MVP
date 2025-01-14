@@ -6,6 +6,10 @@ interface IProps {
   placeHolder: string;
 }
 
+interface IOnClick {
+  onClick?: () => void;
+}
+
 interface ISearchButton {
   SearchButton: ComponentType;
 }
@@ -16,7 +20,7 @@ const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
   return (
     <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] border-gray-200 pl-4">
       <input
-        className="text-black bg-white flex-1 px-4 py-2 focus:outline-none"
+        className="flex-1 bg-white px-4 py-2 text-black focus:outline-none"
         type="text"
         placeholder={placeHolder}
       />
@@ -25,9 +29,12 @@ const SearchFieldBase: React.FC<IProps & ISearchButton> = ({
   );
 };
 
-const MainBlue: React.FC<IProps> = ({ placeHolder }) => {
+const MainBlue: React.FC<IProps & IOnClick> = ({ placeHolder, onClick }) => {
   const SeaarchButton = () => (
-    <Button.PrimaryBig className="mr-[6px] flex w-[92px] flex-row justify-center rounded-[10px]">
+    <Button.PrimaryBig
+      className="mr-[6px] flex w-[92px] flex-row justify-center rounded-[10px]"
+      onClick={onClick}
+    >
       <Icons.RightArrow.White />
     </Button.PrimaryBig>
   );
@@ -59,7 +66,7 @@ const Container: React.FC<TContainerPros> = ({
 }) => {
   return (
     <div
-      className={`bg-white flex flex-col rounded-2xl p-2 shadow-md ${className}`}
+      className={`flex flex-col rounded-2xl bg-white p-2 shadow-md ${className}`}
     >
       <div className="flex flex-row">{children}</div>
       {Footer !== undefined ? <Footer /> : <></>}
