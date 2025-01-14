@@ -31,7 +31,7 @@ const Profile = () => {
           </Text.BodyMedium>
         </div>
         <div className="border-smoke my-5 border-b-[1px]" />
-        <div className="flex flex-col gap-[18.5px]">
+        <div className="flex flex-col gap-4">
           <Text.BodyMedium className="text-tornado flex flex-row items-center gap-[9px]">
             <Icons.Call /> +1 828 600 6006
           </Text.BodyMedium>
