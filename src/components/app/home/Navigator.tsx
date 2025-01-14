@@ -1,18 +1,19 @@
 import { Icons } from "@/components";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const Navigator: React.FC = () => {
   return (
     <div className="flex h-[60px] flex-row items-center gap-4 rounded-2xl bg-white shadow-md">
-      <div>
+      <Link href={"/"}>
         <Image
           src={"/logo-small.png"}
           width={43}
           height={43}
           alt={"company logo small"}
         />
-      </div>
+      </Link>
 
       <div className="h-[48px] border border-[#F1F7FF]" />
 
