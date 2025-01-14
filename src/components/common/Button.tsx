@@ -25,16 +25,18 @@ interface IActiveProps {
   isActive?: boolean;
 }
 
-const SmallBase: React.FC<PropsWithChildren & IClassNameProps> = ({
+const SmallBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
+  onClick,
 }) => {
   return (
-    <div
+    <button
       className={`h-[33px] rounded-lg border-[1px] px-3.5 py-2 ${className}`}
+      onClick={onClick}
     >
       {children}
-    </div>
+    </button>
   );
 };
 
@@ -53,12 +55,14 @@ const BigBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   );
 };
 
-const SecondarySmall: React.FC<PropsWithChildren & IClassNameProps> = ({
-  children,
-  className,
-}) => {
+const SecondarySmall: React.FC<
+  PropsWithChildren & IClassNameProps & IOnClick
+> = ({ children, className, onClick }) => {
   return (
-    <SmallBase className={`border-mountain-lake bg-transparent ${className}`}>
+    <SmallBase
+      className={`border-mountain-lake bg-transparent ${className}`}
+      onClick={onClick}
+    >
       <Text.BodySmallMedium className="text-mountain-lake">
         {children}
       </Text.BodySmallMedium>

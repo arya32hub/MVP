@@ -15,6 +15,7 @@ import {
   Text,
 } from "@/components";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Filter = () => {
   return (
@@ -73,6 +74,10 @@ const SearchSection = () => {
 };
 
 export default function Search() {
+  const router = useRouter();
+  const navigateToCandidateProfile = () => {
+    router.push("/candidate-profile");
+  };
   return (
     <div className="mx-16 flex flex-row gap-4 px-[131px]">
       <Filter />
@@ -80,7 +85,7 @@ export default function Search() {
       <div className="flex-1">
         <SearchSection />
         <div className="mt-4">
-          <Candidate />
+          <Candidate onClick={navigateToCandidateProfile} />
         </div>
       </div>
     </div>

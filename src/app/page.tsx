@@ -3,7 +3,7 @@
 import { SearchFocus } from "@/assets/svg";
 import { Button, SearchBar } from "@/components";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="mx-16 mb-4 flex flex-col items-center justify-center px-[292px] pt-[118.25px]">
       <Image
-        src="/public/logo-big.png"
+        src="/logo-big.png"
         width={215.53}
         height={104.94}
         alt={"glink logo"}

@@ -7,7 +7,7 @@ const Navigator: React.FC = () => {
     <div className="flex h-[60px] flex-row items-center gap-4 rounded-2xl bg-white shadow-md">
       <div>
         <Image
-          src={"/public/logo-small.png"}
+          src={"/logo-small.png"}
           width={43}
           height={43}
           alt={"company logo small"}
