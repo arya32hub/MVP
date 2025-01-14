@@ -1,5 +1,6 @@
 "use client";
 
+import { API } from "@/api";
 import {
   BookOpen,
   FilterMailSquare,
@@ -14,8 +15,10 @@ import {
   SearchBar,
   Text,
 } from "@/components";
+import { User } from "@/model";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const Filter = () => {
   return (
@@ -54,10 +57,16 @@ const Filter = () => {
   );
 };
 
-const SearchSection = () => {
-  const searchParams = useSearchParams();
+interface ISearchSectionProps {
+  text?: string;
+}
+const SearchSection: React.FC<ISearchSectionProps> = ({ text }) => {
+  const router = useRouter();
 
-  const query = searchParams.get("query");
+  const navigateToSearch = (query?: string) => {
+    router.push(`/search?query=${query}`);
+  };
+
   const Footer: React.FC = () => (
     <div className="mx-[9px] mt-3 flex flex-row items-center justify-between">
       <Checkbox.All isChecked />
@@ -73,7 +82,8 @@ const SearchSection = () => {
       <Button.IceCube svgLeft={SearchFocus} text={"Advanced Search"} />
       <SearchBar.MountainLake
         placeHolder="Type here..."
-        value={query !== null ? query : undefined}
+        value={text}
+        onClick={navigateToSearch}
       />
     </SearchBar.Container>
   );
@@ -81,18 +91,43 @@ const SearchSection = () => {
 
 export default function Search() {
   const router = useRouter();
+  const [response, setResponse] = useState<
+    User.Search.ISearchApiResponse | undefined
+  >();
+
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const [searchQuery, setSearchQuery] = useState(query);
 
   const navigateToCandidateProfile = () => {
     router.push("/candidate-profile");
   };
+
+  // const response = use(API.User.search(query ? query : ""));
+
+  useEffect(() => {
+    API.User.search(query ? query : "").then((response) => {
+      setResponse(response);
+    });
+    console.log("SEARCH TRIGGERED");
+  }, [query]);
+
   return (
     <div className="mx-16 flex flex-row gap-4 px-[131px]">
       <Filter />
 
       <div className="flex-1">
-        <SearchSection />
+        <SearchSection text={searchQuery ? searchQuery : undefined} />
         <div className="mt-4">
-          <Candidate onClick={navigateToCandidateProfile} />
+          {response
+            ? response.results.map((results) => (
+                <Candidate
+                  key={results.data.orcid_id}
+                  onClick={navigateToCandidateProfile}
+                  {...results}
+                />
+              ))
+            : "Loading..."}
         </div>
       </div>
     </div>

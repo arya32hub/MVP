@@ -75,7 +75,10 @@ interface Schema {
   data: Data;
   level_two_data: LevelTwoData;
 }
-
+interface ISearchApiResponse {
+  query: string;
+  results: Schema[];
+}
 export type {
   BookPublication,
   CareerItem,
@@ -87,4 +90,5 @@ export type {
   Publication,
   ReviewerRole,
   Schema,
+  ISearchApiResponse,
 };

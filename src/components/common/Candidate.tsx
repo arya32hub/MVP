@@ -1,3 +1,4 @@
+import { User } from "@/model";
 import Image from "next/image";
 import { Bookmark, Button, Checkbox, Chips, Text } from ".";
 import { Icons } from "..";
@@ -50,7 +51,9 @@ const Divider = () => (
   <div className="mx-[37px] h-full border-[1px] border-l border-smoke" />
 );
 
-const Candidate: React.FC<IOnClick> = ({ onClick }) => {
+const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
+  onClick,
+}) => {
   return (
     <div className="flex flex-row rounded-2xl bg-white p-4 text-main-blue shadow-md">
       <div className="flex w-full flex-row items-center justify-between gap-4">
