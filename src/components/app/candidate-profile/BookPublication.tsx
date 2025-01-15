@@ -1,4 +1,4 @@
-import { Icons, Text } from "@/components";
+import { CandidateProfile, Icons, Text } from "@/components";
 import { User } from "@/model";
 
 const BookPublications = ({
@@ -14,16 +14,16 @@ const BookPublications = ({
       <Text.H3 className="flex flex-row gap-3 text-gray-900">
         <Icons.FileSearch /> {title}
       </Text.H3>
-      {publications.map((pub, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="font-semibold text-main-blue">
-            {pub.book_publication_title}
-          </Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            ({pub.book_publication_end_date}). {pub.book_publication_bookname}
-          </Text.BodySmall>
-        </div>
-      ))}
+
+      {publications
+        .map((pub) => ({
+          date: new Date(pub.book_publication_end_date).getFullYear(),
+          heading: pub.book_publication_title,
+          accomplishments: [pub.book_publication_bookname],
+        }))
+        .map((props, index) => (
+          <CandidateProfile.CareerTimelineItem key={index} {...props} />
+        ))}
     </div>
   );
 };

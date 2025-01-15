@@ -13,11 +13,12 @@ const TieringSection = ({
       <Text.H3 className="flex flex-row gap-3 text-gray-900">
         <Icons.FileSearch /> Tiering Data
       </Text.H3>
-      {Object.entries(tiering).map(([key, value]) =>
-        key !== "total_score" && value ? (
-          <div key={key} className="flex flex-col gap-2">
+
+      {Object.entries(tiering).map(([header, value]) =>
+        header !== "total_score" && value ? (
+          <div key={header} className="flex flex-col gap-2">
             <Text.BodySmall className="font-semibold text-main-blue">
-              {key.replace(/_/g, " ").toUpperCase()}
+              {header.replace(/_/g, " ").toUpperCase()}
             </Text.BodySmall>
             <Text.BodySmall className="text-tornado">
               Analysis: {value.analysis}, Score: {value.score}
@@ -25,6 +26,7 @@ const TieringSection = ({
           </div>
         ) : null,
       )}
+
       {tiering.total_score && (
         <div className="flex flex-col gap-2">
           <Text.BodySmall className="text-xl font-bold text-green-600">

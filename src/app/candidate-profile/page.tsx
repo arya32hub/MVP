@@ -62,11 +62,19 @@ const CandidateProfileScreen = () => {
 
   return (
     <div className="mx-16 flex flex-row gap-4 px-[131px]">
-      <div className="absolute right-4 top-4">
-        <Button.PrimarySmall onClick={fetchTiering}>
-          {tieringLoading ? "Loading..." : "Get Tiering"}
-        </Button.PrimarySmall>
-      </div>
+      {!tiering ? (
+        <div className="absolute right-4 top-4">
+          <Button.PrimarySmall
+            className="animate-bounce"
+            onClick={fetchTiering}
+          >
+            {tieringLoading ? "Loading..." : "Get Tiering"}
+          </Button.PrimarySmall>
+        </div>
+      ) : (
+        <></>
+      )}
+
       <CandidateProfile.Profile user={profile.data} />
       <CandidateProfile.Bio
         levelTwoData={profile.level_two_data}
