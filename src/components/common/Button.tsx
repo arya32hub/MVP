@@ -76,11 +76,26 @@ const SecondarySmall: React.FC<
   );
 };
 
-const PrimarySmall: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
+const GraySmall: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
   onClick,
 }) => {
+  return (
+    <SmallBase
+      className={`border-gray-500 bg-transparent ${className}`}
+      onClick={onClick}
+    >
+      <Text.BodySmallMedium className="text-gray-500">
+        {children}
+      </Text.BodySmallMedium>
+    </SmallBase>
+  );
+};
+
+const PrimarySmall: React.FC<
+  PropsWithChildren & IClassNameProps & IOnClick
+> = ({ children, className, onClick }) => {
   return (
     <SmallBase
       className={`border-main-blue bg-main-blue text-white ${className}`}
@@ -209,4 +224,5 @@ export {
   Secondary,
   SecondaryBig,
   SecondarySmall,
+  GraySmall,
 };
