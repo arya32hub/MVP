@@ -70,7 +70,7 @@ const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
         <div className="flex h-full flex-col items-end justify-between">
           <Bookmark />
           <Button.SecondarySmall onClick={onClick}>
-            View Profile
+            View
           </Button.SecondarySmall>
         </div>
       </div>

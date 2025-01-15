@@ -76,13 +76,15 @@ const SecondarySmall: React.FC<
   );
 };
 
-const PrimarySmall: React.FC<PropsWithChildren & IClassNameProps> = ({
+const PrimarySmall: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
+  onClick,
 }) => {
   return (
     <SmallBase
       className={`border-main-blue bg-main-blue text-white ${className}`}
+      onClick={onClick}
     >
       <Text.BodySmallMedium className="text-white">
         {children}

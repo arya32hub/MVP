@@ -1,235 +1,11 @@
-# from search.search import Search
-# import json
-
-# class PeopleSearch(Search):
-#     def __init__(self):
-#         super().__init__()
-#         self.schema = {
-#             "book_publication": [],
-#             "career_item": [],
-#             "contact_address": [],
-#             "education": [],
-#             "first_name": "",
-#             "grant_research": [],
-#             "journal_publications": [],
-#             "last_name": "",
-#             "other_publication": [],
-#             "peer_review_publication": [],
-#             "research_clinical_experience": [],
-#             "reviewer_role": [],
-#         }
-
-#     def create_index(self):
-#         """
-#         Implementation of the abstract method to create an index.
-#         """
-#         print("Creating an index... (dummy implementation)")
-
-#     def retrieve_document(self, id):
-#         """
-#         Implementation of the abstract method to retrieve a document by ID.
-#         """
-#         try:
-#             print(f"Attempting to retrieve document with ID: {id}")
-#             return self.es.get(index="candidates", id=id).get("_source")
-#         except Exception as e:
-#             print(f"Error retrieving document: {e}")
-#             return {}
-
-#     def chat_gpt(self, prompt):
-#         try:
-#             print(f"Sending prompt to GPT: {prompt}")
-#             response = self.client.chat.completions.create(
-#                 model="gpt-4",
-#                 messages=[
-#                     {"role": "system", "content": f"Break the user's prompt into searchable categories based on this schema: {json.dumps(self.schema)}. Write only the fields names as keys"
-#                                                 f"Anything work related should be in career item. Return the result as a JSON dictionary where keys are schema fields and values are search terms. If several values/search terms belong to a key,combine into a single string and put as value. NEVER do lists for values."},
-#                     {"role": "user", "content": prompt}
-#                 ]
-#             )
-
-#             print(f"Received response from GPT: {response.choices[0].message.content}")
-#             parsed_fields = json.loads(response.choices[0].message.content)
-
-#             if isinstance(parsed_fields, dict):
-#                 print(f"Parsed fields: {parsed_fields}")
-#                 return {key: value for key, value in parsed_fields.items() if value}
-#             else:
-#                 print("GPT response is not a valid dictionary.")
-#                 return {}
-
-#         except json.JSONDecodeError:
-#             print("Error parsing GPT response. Ensure GPT returns a JSON-like structure.")
-#             return {}
-#         except Exception as e:
-#             print(f"Error in chat_gpt: {e}")
-#             return {}
-
-#     def search(self, query):
-#         try:
-#             print(f"Searching with query: {query}")
-#             response = self.es.search(index="candidates", body=query)
-#             return response
-#         except Exception as e:
-#             print(f"Error searching documents: {e}")
-#             return {}
-
-#     def search_all_data(self):
-#         try:
-#             query = {
-#                 "query": {
-#                     "match_all": {}
-#                 }
-#             }
-
-#             print("Performing search for all data.")
-#             response = self.search(query)
-
-#             if 'hits' in response and 'hits' in response['hits']:
-#                 documents = [hit['_source'] for hit in response['hits']['hits']]
-#                 print(f"Found {len(documents)} documents.")
-#                 return documents
-#             else:
-#                 print("No documents found or unexpected response structure.")
-#                 return []
-
-#         except Exception as e:
-#             print(f"Error retrieving all data: {e}")
-#             return []
-
-#     def search_by_field(self, field, value):
-#         try:
-#             query = {
-#                 "query": {
-#                     "match": {
-#                         field: {
-#                             "query": value,
-#                             "fuzziness": "AUTO",
-#                             "operator": "and"
-#                         }
-#                     }
-#                 }
-#             }
-
-#             print(f"Performing fuzzy search for field '{field}' with value '{value}'.")
-#             response = self.search(query)
-
-#             if 'hits' in response and 'hits' in response['hits']:
-#                 documents = [hit['_source'] for hit in response['hits']['hits']]
-#                 print(f"Found {len(documents)} documents for field '{field}' with value '{value}'.")
-#                 return documents
-#             else:
-#                 print(f"No documents found for field '{field}' with fuzzy value '{value}'.")
-#                 return []
-
-#         except Exception as e:
-#             print(f"Error performing fuzzy search by field: {e}")
-#             return []
-
-#     def search_by_fields(self, fields):
-#         print(fields.keys())
-#         try:
-#             must_conditions = [
-#                 {
-#                     "match": {
-#                         field: {
-#                             "query": value,
-#                             "fuzziness": "AUTO",
-#                             "operator": "and"
-#                         }
-#                     }
-#                 }
-#                 for field, value in fields.items()
-#             ]
-
-#             query = {
-#                 "query": {
-#                     "bool": {
-#                         "must": must_conditions
-#                     }
-#                 }
-#             }
-
-#             print(f"Performing multi-field search with conditions: {fields}")
-#             response = self.search(query)
-
-#             if 'hits' in response and 'hits' in response['hits']:
-#                 documents = [hit['_source'] for hit in response['hits']['hits']]
-#                 print(f"Found {len(documents)} documents matching the search criteria.")
-#                 return documents
-#             else:
-#                 print("No documents found for the given fields.")
-#                 return []
-
-#         except Exception as e:
-#             print(f"Error performing multi-field search: {e}")
-#             return []
-
-#     def search_with_prompt(self, prompt):
-#         try:
-#             print(f"Processing prompt: {prompt}")
-#             parsed_fields = self.chat_gpt(prompt)
-#             print(f"Parsed fields from GPT: {parsed_fields}")
-
-#             if not parsed_fields:
-#                 print("No valid fields parsed from the prompt.")
-#                 return []
-
-#             results = self.search_by_fields(parsed_fields)
-#             print(f"Search results based on parsed fields: {results}")
-#             return results
-#         except Exception as e:
-#             print(f"Error in search_with_prompt: {e}")
-#             return []
-
-# def main():
-#     ps = PeopleSearch()
-
-#     prompt = "I am looking for someone who went to Harvard medical school."
-
-#     print("\nProcessing prompt and performing search:")
-#     results = ps.search_with_prompt(prompt)
-
-#     with open("prompt_search_results.json", "w") as file:
-#         json.dump(results, file, indent=2)
-
-#     print("Results written to prompt_search_results.json")
-
-# if __name__ == "__main__":
-#     main()
-
 from search.search import Search
 import json
-from elasticsearch import Elasticsearch
-
+import re
+import concurrent.futures
 
 class PeopleSearch(Search):
     def __init__(self):
         super().__init__()
-        self.schema = {
-            # "award": [],
-            "book_publications": [],
-            "career_item": [],
-            # "certification_license": [],
-            # "committee_associated_board_chair_investigator": [],
-            # "community_service": [],
-            "contact_address": [],
-            "contact_email": [],
-            # "contact_phone_number": [],
-            "education": [],
-            "first_name": "",
-            "grant_research": [],
-            "journal_publications": [],
-            "last_name": "",
-            # "leadership_activities": [],
-            "middle_name": "",
-            "other_publication": [],
-            # "peer_review_publication": [],
-            # "research_clinical_experience": [],
-            "reviewer_role": [],
-            # "speaking_engagement_presentations": [],
-            # "teaching_lecture_course": []
-        }
 
     def create_index(self):
         """
@@ -251,253 +27,134 @@ class PeopleSearch(Search):
         return self.es.get(index='candidates', id=id).get('_source')['level_two_data']
 
     def chat_gpt(self, prompt):
-        """
-        Return a JSON dict with a single key: 'l2'.
-        The 'l2' value must be an object containing individual field-value pairs,
-        e.g. {
-        "award.award_date": "1983",
-        "career_item.career_institution": "Harvard Medical School"
-        }
-        """
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="chatgpt-4o-latest",
                 messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a helper that takes a user prompt and maps it to the level_two_data (L2) fields in our CV schema. "
-                            "Return a JSON with EXACTLY ONE TOP-LEVEL KEY: 'l2'. The value of 'l2' must be an object.\n\n"
+                   {
+                    "role": "system",
+                    "content": (
+                        "You are a helper that takes a user prompt and maps it to the level_two_data (L2) fields in our CV schema. "
+                        "Return a JSON with EXACTLY ONE TOP-LEVEL KEY: 'l2'. The value of 'l2' must be an object.\n\n"
 
-                            "============================================================\n"
-                            "CORRECT EXAMPLE (MANY FIELDS):\n"
-                            "------------------------------------------------------------\n"
-                            "{\n"
-                            "  \"l2\": {\n"
-                            "    \"other_publications.other_publication_end_date\": \"1983\",\n"
-                            "    \"other_publications.other_publication_title\": \"Award, award_recognition_national\",\n"
-                            "    \"career_item.career_institution\": \"University of Chicago\",\n"
-                            "    \"career_item.career_role\": \"Associate Professor\",\n"
-                            "    \"education.education_degree\": \"Ph.D.\",\n"
-                            "    \"education.education_institution\": \"Mayo Graduate School\"\n"
-                            "  }\n"
-                            "}\n\n"
-                            "WRONG EXAMPLE (STRING INSTEAD OF KEYS):\n"
-                            "------------------------------------------------------------\n"
-                            "{\n"
-                            "  \"l2\": \"other_publications.other_publication_end_date: 1983, career_item.career_institution: University of Chicago\"\n"
-                            "}\n\n"
-                            "YOU MUST NOT RETURN A SINGLE STRING IN 'l2'. Instead, return a JSON object with separate fields.\n\n"
+                        "============================================================\n"
+                        "CORRECT EXAMPLES (MANY FIELDS):\n"
+                        "------------------------------------------------------------\n"
+                        "Single fields:\n"
+                        "{\n"
+                        "  \"l2\": {\n"
+                        "    \"other_publications.other_publication_end_date\": \"1983\",\n"
+                        "    \"other_publications.other_publication_title\": \"Award, award_recognition_national\",\n"
+                        "    \"career_item.career_institution\": \"University of Chicago\",\n"
+                        "    \"career_item.career_role\": \"Associate Professor\",\n"
+                        "    \"education.education_degree\": \"Ph.D.\",\n"
+                        "    \"education.education_institution\": \"Mayo Graduate School\"\n"
+                        "  }\n"
+                        "}\n\n"
 
-                            "============================================================\n"
-                            "L2 FIELDS (inside 'level_two_data.<FIELD_NAME>'): \n"
-                            "------------------------------------------------------------\n"
-                            "Below are the top-level category names and example subfields:\n\n"
+                        "Multiple fields:\n"
+                        "{\n"
+                        "    \"l2\": {\n"
+                        "        \"journal_publications.journal_publication_title\": [\"Gene Therapy Research\", \"],\n"
+                        "        \"journal_publications.journal_publication_date\": \"2019\",\n"
+                        "        \"education.education_degree\": \"MD\",\n"
+                        "        \"career_item.career_institution\": \"Johns Hopkins University\"\n"
+                        "    }\n"
+                        "}\n\n"
 
-                            # "1) award\n"
-                            # "   - award_date\n"
-                            # "   - award_field_subject\n"
-                            # "   - award_item\n"
-                            # "   - award_name\n"
-                            # "   - award_provider_institution_organization\n\n"
+                        "============================================================\n"
+                        "L2 FIELDS (inside 'level_two_data.<FIELD_NAME>'): \n"
+                        "------------------------------------------------------------\n"
+                        "Below are the top-level category names and example subfields:\n\n"
 
-                            "1) book_publications\n"
-                            # "   - book_publication_author\n"
-                            "   - book_publication_bookname\n"
-                            # "   - book_publication_chapter\n"
-                            # "   - book_publication_edition\n"
-                            # "   - book_publication_editor\n"
-                            "   - book_publication_end_date\n"
-                            # "   - book_publication_end_page\n"
-                            # "   - book_publication_identifier\n"
-                            # "   - book_publication_issue\n"
-                            # "   - book_publication_item\n"
-                            "   - book_publication_publisher\n"
-                            # "   - book_publication_publisher_city_state\n"
-                            # "   - book_publication_start_page\n"
-                            "   - book_publication_title\n\n"
-                            # "   - book_publication_volume\n\n"
+                        "other_publications:\n"
+                        "  - publication_title (str)\n"
+                        "  - publication_end_date (str)\n"
+                        "  - publication_type (str)\n"
+                        "  - publication_publisher (str)\n"
+                        "  - publication_identifier (str)\n\n"
 
-                            "2) career_item\n"
-                            "   - career_city\n"
-                            "   - career_country_state\n"
-                            "   - career_end_date\n"
-                            "   - career_institution\n"
-                            "   - career_role\n"
-                            "   - career_start_date\n\n"
-                            # "   - career_sub_department\n"
-                            # "   - career_time\n"
-                            # "   - career_type\n\n"
+                        "education:\n"
+                        "  - education_institution (str)    <== can be a list if user said 'Harvard and MIT'\n"
+                        "  - education_city (str)\n"
+                        "  - education_state (str)\n"
+                        "  - education_country_state_city (str)\n"
+                        "  - education_department (str)\n"
+                        "  - education_degree (str)\n"
+                        "  - education_start_date (object)\n"
+                        "  - education_end_date (object)\n\n"
 
-                            # "4) certification_license\n"
-                            # "   - certification_license_city_state\n"
-                            # "   - certification_license_country\n"
-                            # "   - certification_license_date_issued\n"
-                            # "   - certification_license_date_reissued\n"
-                            # "   - certification_license_identification\n"
-                            # "   - certification_license_item\n"
-                            # "   - certification_license_name\n"
-                            # "   - certification_license_provider_institution\n"
-                            # "   - certification_license_role\n"
-                            # "   - certification_license_start_date\n"
-                            # "   - certification_license_title_description\n\n"
+                        "career_item:\n"
+                        "  - career_institution (str)\n"
+                        "  - career_city (str)\n"
+                        "  - career_state (str)\n"
+                        "  - career_country_state (str)\n"
+                        "  - career_role (str)\n"
+                        "  - career_start_date (object)\n"
+                        "  - career_end_date (object)\n\n"
 
-                            # "5) committee_associated_board_chair_investigator\n"
-                            # "   - committee_end_date\n"
-                            # "   - committee_item\n"
-                            # "   - committee_name\n"
-                            # "   - committee_organization\n"
-                            # "   - committee_role\n"
-                            # "   - committee_start_date\n"
-                            # "   - committee_type\n\n"
+                        "grant_research:\n"
+                        "  - grant_title (str)\n"
+                        "  - grant_agency (str)\n"
+                        "  - grant_start_date (object)\n"
+                        "  - grant_end_date (object)\n\n"
 
-                            # "6) community_service\n"
-                            # "   - community_service_description\n"
-                            # "   - community_service_end_date\n"
-                            # "   - community_service_item\n"
-                            # "   - community_service_organization\n"
-                            # "   - community_service_role\n"
-                            # "   - community_service_start_date\n\n"
+                        "journal_publications:\n"
+                        "  - journal_publication_title (str)\n"
+                        "  - journal_publication_date (object)\n"
+                        "  - journal_publication_name (str)\n\n"
 
-                            "3) education\n"
-                            "   - education_country_state_city\n"
-                            "   - education_degree\n"
-                            "   - education_department\n"
-                            "   - education_end_date\n"
-                            # "   - education_field\n"
-                            # "   - education_grade_honor\n"
-                            "   - education_institution\n"
-                            "   - education_start_date\n\n"
-                            # "   - education_sub_field\n\n"
+                        "book_publications:\n"
+                        "  - book_publication_title (str)\n"
+                        "  - book_publication_bookname (str)\n"
+                        "  - book_publication_end_date (object)\n"
+                        "  - book_publication_publisher (str)\n\n"
 
-                            "4) grant_research\n"
-                            "   - grant_agency\n"
-                            # "   - grant_amount\n"
-                            "   - grant_end_date\n"
-                            # "   - grant_item\n"
-                            # "   - grant_role\n"
-                            "   - grant_start_date\n"
-                            "   - grant_title\n\n"
+                        "reviewer_role:\n"
+                        "  - reviewer_role (str)\n"
+                        "  - reviewer_end_date (object)\n"
+                        "  - reviewer_organization (str)\n\n"
 
-                            "5) journal_publications\n"
-                            # "   - journal_publication_author\n"
-                            "   - journal_publication_end_date\n"
-                            # "   - journal_publication_end_page\n"
-                            # "   - journal_publication_identifier\n"
-                            # "   - journal_publication_issue\n"
-                            # "   - journal_publication_item\n"
-                            "   - journal_publication_journal_name\n"
-                            # "   - journal_publication_start_page\n"
-                            "   - journal_publication_title\n\n"
-                            # "   - journal_publication_volume\n\n"
-
-                            # "10) leadership_activities\n"
-                            # "   - leadership_description\n"
-                            # "   - leadership_end_date\n"
-                            # "   - leadership_item\n"
-                            # "   - leadership_organization\n"
-                            # "   - leadership_role\n"
-                            # "   - leadership_start_date\n\n"
-
-                            # "11) peer_review_publication\n"
-                            # "   - peer_review_publication_end_date\n"
-                            # "   - peer_review_publication_end_page\n"
-                            # "   - peer_review_publication_identifier\n"
-                            # "   - peer_review_publication_issue\n"
-                            # "   - peer_review_publication_publisher_name\n"
-                            # "   - peer_review_publication_role\n"
-                            # "   - peer_review_publication_start_page\n"
-                            # "   - peer_review_publication_title\n"
-                            # "   - peer_review_publication_type\n"
-                            # "   - peer_review_publication_volume\n\n"
-
-                            # "12) research_clinical_experience\n"
-                            # "   - research_agency\n"
-                            # "   - research_costs\n"
-                            # "   - research_country\n"
-                            # "   - research_department_laboratory\n"
-                            # "   - research_description_goal\n"
-                            # "   - research_end_date\n"
-                            # "   - research_field_subject\n"
-                            # "   - research_foundation_sponsor\n"
-                            # "   - research_funding_amount\n"
-                            # "   - research_identification\n"
-                            # "   - research_institution\n"
-                            # "   - research_item\n"
-                            # "   - research_percent_effort\n"
-                            # "   - research_publisher\n"
-                            # "   - research_role\n"
-                            # "   - research_start_date\n"
-                            # "   - research_state_city\n"
-                            # "   - research_supervisor\n"
-                            # "   - research_title_name\n\n"
-
-                            "6) reviewer_role\n"
-                            "   - reviewer_end_date\n"
-                            # "   - reviewer_field\n"
-                            # "   - reviewer_item\n"
-                            "   - reviewer_organization\n"
-                            "   - reviewer_role\n\n"
-                            # "   - reviewer_start_date\n\n"
-
-                            # "14) speaking_engagement_presentations\n"
-                            # "   - speaking_engagement_audience\n"
-                            # "   - speaking_engagement_city\n"
-                            # "   - speaking_engagement_country_state\n"
-                            # "   - speaking_engagement_date\n"
-                            # "   - speaking_engagement_event_name\n"
-                            # "   - speaking_engagement_event_title_topic\n"
-                            # "   - speaking_engagement_institution\n"
-                            # "   - speaking_engagement_item\n"
-                            # "   - speaking_engagement_type\n\n"
-                            "7) other_publications\n"
-                            "   - other_publication_end_date\n"
-                            "   - other_publication_title\n\n"
-                            "   - other_publication_type\n"
-                            "   - other_publication_publisher\n\n"
-                            
-                            # "15) teaching_lecture_course\n"
-                            # "   - lecture_city_state\n"
-                            # "   - lecture_country\n"
-                            # "   - lecture_end_date\n"
-                            # "   - lecture_institution\n"
-                            # "   - lecture_institution_sub_department\n"
-                            # "   - lecture_item\n"
-                            # "   - lecture_name_title\n"
-                            # "   - lecture_role\n"
-                            # "   - lecture_start_date\n"
-                            # "   - lecture_type\n\n"
-
-                            "============================================================\n"
-                            "RULES:\n"
-                            "1) Output only an object under 'l2'.\n"
-                            "2) Each key must be <CATEGORY>.<SUBFIELD>, e.g. 'other_publications.other_publications_end_date'.\n"
-                            "3) If there is a topic that can be in multiple categories, write all categories that apply.\n"
-                            "4) Combine multiple references in the user prompt into multiple keys.\n"
-                            "5) Never return a single big string in 'l2'.\n"
-                            "6) Return strictly valid JSON with exactly one top-level key: 'l2'.\n"
-                            "7) Write full correct names and terminologies (e.g., 'University of Chicago' instead of 'UChicago').\n"
-                        )
-                    },
+                        "============================================================\n"
+                        "RULES:\n"
+                        "1) Return strictly valid JSON with exactly one top-level key: 'l2'.\n"
+                        "2) Each key must be <CATEGORY>.<SUBFIELD>, e.g. 'other_publications.other_publication_end_date'.\n"
+                        "3) Apply to as many as applies of book_publications, journal_publications, and other_publications. \n"
+                        "   (If the user explicitly mentions a second publication type, choose the most relevant single type for their request.)\n"
+                        "4) Combine multiple references in the user prompt into multiple keys.\n"
+                        "5) Never return a single big string in 'l2'. Each field must be an individual key-value.\n"
+                        "6) Include only terms that are essential for searching (e.g., 'breast cancer' instead of 'research on breast cancer').\n"
+                        "7) Use correct institution or city names (no abbreviations like 'UChicago').\n"
+                        "8) Do not include extra words in the value, only relevant for the search.\n"
+                        "9) To improve search, add additional keywords similar to the user search for all experience or research related topics.\n"
+                        "9) Any work or experience topic or research-related phrase must be placed in a publication and 'grant_research' field and 'career_iterm' field.\n"
+                        "10) A single field can hold several comma-separated or array-based entries if the user says 'and.' E.g.\n"
+                        "    education.education_institution: [\"Harvard University\", \"Massachusetts Institute of Technology\"]\n\n"
+                        "11) Write as many fields as possible to improve the search results.\n"
+                    )
+                    }
+                    ,
                     {
                         "role": "user",
                         "content": prompt
                     }
                 ]
             )
+            gpt_return = response.choices[0].message.content
+            start_json = gpt_return.find("{")
+            end_json = gpt_return.rfind("}") + 1 
+            gpt_return = gpt_return[start_json:end_json]
+            print("GPT response:", response.choices[0].message.content)
 
-            parsed_fields = json.loads(response.choices[0].message.content)
+            parsed_fields = json.loads(gpt_return)
 
-            # If we didn't get a dict at all, return empty
             if not isinstance(parsed_fields, dict):
                 print("GPT response is not a valid dictionary.")
                 return {}
 
-            # Ensure "l2" is present and is a dict
             if "l2" not in parsed_fields:
                 parsed_fields["l2"] = {}
             elif not isinstance(parsed_fields["l2"], dict):
-                # If GPT messed up and gave a string, forcibly make it a dict
                 parsed_fields["l2"] = {}
 
             return parsed_fields
@@ -511,10 +168,9 @@ class PeopleSearch(Search):
 
 
 
-
     def search(self, query):
         try:
-            response = self.es.search(index="candidates", body=query)
+            response = self.es.search(index="candidates", body=query, size=10000)
             return response
         except Exception as e:
             print(f"Error searching documents: {e}")
@@ -542,114 +198,74 @@ class PeopleSearch(Search):
             print(f"Error retrieving all data: {e}")
             return []
 
-    def search_by_field(self, field, value):
-        try:
-            query = {
-                "query": {
-                    "match": {
-                        field: {
-                            "query": value,
-                            "fuzziness": "AUTO",
-                            "operator": "and"
-                        }
-                    }
-                }
-            }
-
-            response = self.search(query)
-
-            if 'hits' in response and 'hits' in response['hits']:
-                documents = [hit['_source'] for hit in response['hits']['hits']]
-                return documents
-            else:
-                print(f"No documents found for field '{field}' with fuzzy value '{value}'.")
-                return []
-
-        except Exception as e:
-            print(f"Error performing fuzzy search by field: {e}")
-            return []
-
-    def search_by_fields(self, fields):
-        try:
-            must_conditions = [
-                {
-                    "match": {
-                        field: {
-                            "query": value,
-                            "fuzziness": "AUTO",
-                            "operator": "and"
-                        }
-                    }
-                }
-                for field, value in fields.items()
-            ]
-
-            query = {
-                "query": {
-                    "bool": {
-                        "must": must_conditions
-                    }
-                }
-            }
-
-            response = self.search(query)
-
-            if 'hits' in response and 'hits' in response['hits']:
-                documents = [hit['_source'] for hit in response['hits']['hits']]
-                return documents
-            else:
-                print("No documents found for the given fields.")
-                return []
-
-        except Exception as e:
-            print(f"Error performing multi-field search: {e}")
-            return []
+    def detect_publication_type(self, prompt: str) -> str:
+        p = prompt.lower()
+        if "journal" in p:
+            return "journal_publications"
+        if "book" in p:
+            return "book_publications"
+        if "other" in p:
+            return "other_publications"
+        if "grant" in p:  # <--- allow specifically requesting "grant"
+            return "grant_research"
+        if "research" in p or "publication" in p or "paper" in p:
+            return "all"
+        return "all"
 
     def search_in_level_two_data(self, fields):
         """
         Search for values in one or more fields within `level_two_data`.
 
-        Example:
-            fields = {
-                "career_item.career_institution": "University of Chicago",
-                "education.education_institution": "MIT"
-            }
-        will search documents where:
-            level_two_data.career_item.career_institution == "University of Chicago" AND
-            level_two_data.education.education_institution == "MIT"
-
-        Args:
-            fields (dict): A dictionary of {field_path: value} pairs.
-                        field_path should omit the 'level_two_data.' prefix.
-                        e.g. "career_item.career_institution": "University of Chicago"
-
-        Returns:
-            list: Documents matching all the given field-value pairs.
+        Now supports multiple values for the SAME field:
+            e.g. { "education.education_institution": ["Harvard", "MIT"] }
+        This will create two `nested` queries in a must array:
+            must: [ {match -> "Harvard"}, {match -> "MIT"} ]
+        thus requiring BOTH to match in the top-level doc.
         """
         try:
             must_conditions = []
 
             for field_path, value in fields.items():
-                print(f"Searching for field '{field_path}' with value '{value}'")
+                # field_path e.g. "education.education_institution"
+                nested_path = field_path.split(".")[0]  # e.g. "education"
 
-                # Add a nested match query for each field in `level_two_data`
-                nested_path = field_path.split(".")[0]  # Extract top-level nested path
-                must_conditions.append({
-                    "nested": {
-                        "path": f"level_two_data.{nested_path}",
-                        "query": {
-                            "match": {
-                                f"level_two_data.{field_path}": {
-                                    "query": value,
-                                    "fuzziness": "AUTO",  # Enable fuzzy search
-                                    "operator": "and"  # Ensures all terms in query must match
+                # If 'value' is a list of strings => create multiple must sub-queries
+                if isinstance(value, list):
+                    for val in value:
+                        must_conditions.append({
+                            "nested": {
+                                "path": f"level_two_data.{nested_path}",
+                                "query": {
+                                    "match": {
+                                        f"level_two_data.{field_path}": {
+                                            "query": val,
+                                            "fuzziness": "AUTO",
+                                            "operator": "and"
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                # If 'value' is a single string
+                elif isinstance(value, str):
+                    must_conditions.append({
+                        "nested": {
+                            "path": f"level_two_data.{nested_path}",
+                            "query": {
+                                "match": {
+                                    f"level_two_data.{field_path}": {
+                                        "query": value,
+                                        "fuzziness": "AUTO",
+                                        "operator": "and"
+                                    }
                                 }
                             }
                         }
-                    }
-                })
+                    })
+                else:
+                    print(f"Ignoring field '{field_path}' because its value is neither list nor string: {value}")
 
-            # Build the final query
+            # Build final bool query
             query = {
                 "query": {
                     "bool": {
@@ -658,7 +274,6 @@ class PeopleSearch(Search):
                 }
             }
 
-            # Execute the query
             response = self.search(query)
 
             # Parse and return the results
@@ -669,52 +284,261 @@ class PeopleSearch(Search):
                 return []
 
         except Exception as e:
-            print(f"Error during search: {e}")
-            return []
-
-
-        except Exception as e:
-            print(f"Error performing multi-field search in `level_two_data`: {e}")
+            print(f"Error during search_in_level_two_data: {e}")
             return []
 
     def search_with_prompt(self, prompt):
         """
-        Example usage:
-        prompt = "I want a user who earned an award in 2015"
-        -> GPT => {
-            "l2": {
-                "award.award_date": "2015"
-            }
-            }
-        -> Then we run search_in_level_two_data({"award.award_date": "2015"})
+        If detect_publication_type == 'all', replicate the parsed publication fields
+        across multiple publication categories (journal, book, other),
+        while still including the non-publication fields (like career_item, education, etc.)
+        in each search. Then combine results.
         """
         try:
+            publication_type = self.detect_publication_type(prompt)
             parsed_fields = self.chat_gpt(prompt)
-            print(f"Parsed fields: {parsed_fields}")
 
-            if not parsed_fields or not parsed_fields.get("l2"):
+            print("Parsed fields (GPT):", parsed_fields)
+
+            if not parsed_fields or "l2" not in parsed_fields or not parsed_fields["l2"]:
                 print("No valid fields parsed from the prompt.")
                 return []
 
-            # Just do an L2 search
-            l2_results = self.search_in_level_two_data(parsed_fields["l2"])
-            print(f"L2 results: Found {len(l2_results)} documents.")
+            publication_prefixes = {"journal_publications", "book_publications", "other_publications", "grant_research"}
 
-            return l2_results
+            publication_fields = {}     # e.g. "journal_publications.journal_publication_title": "Breast cancer"
+            non_publication_fields = {} # e.g. "career_item.career_institution": "Harvard Medical School"
+
+            for field_path, value in parsed_fields["l2"].items():
+                top_category = field_path.split(".")[0]  # e.g. "career_item"
+                if top_category in publication_prefixes:
+                    publication_fields[field_path] = value
+                else:
+                    non_publication_fields[field_path] = value
+
+
+            if publication_type != "all":
+                print(f"\nUser specifically mentioned '{publication_type}'; searching only in that category.\n")
+
+                l2_results = self.search_in_level_two_data(parsed_fields["l2"])
+                print(f"L2 results: Found {len(l2_results)} documents for {publication_type}.")
+                return l2_results
+
+            print("\nUser was vague => replicate across [journal_publications, book_publications, other_publications].\n")
+
+            subfield_map = {
+                "journal_publications": "journal_publication_title",
+                "book_publications": "book_publication_title",
+                "other_publications": "publication_title",
+                "grant_research": "grant_title"
+            }
+
+            categories = list(subfield_map.keys())
+            all_combined_results = []
+
+            pub_values = list(publication_fields.values())
+
+            for cat in categories:
+                l2_for_cat = dict(non_publication_fields)
+
+
+                for pub_val in pub_values:
+                    new_key = f"{cat}.{subfield_map[cat]}"
+                    l2_for_cat[new_key] = pub_val
+
+                cat_results = self.search_in_level_two_data(l2_for_cat)
+                print(f"  -> Found {len(cat_results)} docs for {cat}")
+                all_combined_results.extend(cat_results)
+
+            unique_docs = {
+                json.dumps(doc, sort_keys=True): doc
+                for doc in all_combined_results
+            }
+            final_results = list(unique_docs.values())
+
+            print(f"\nCombined L2 results: Found {len(final_results)} unique documents across all publication types.")
+            return final_results
 
         except Exception as e:
             print(f"Error in search_with_prompt: {e}")
             return []
+        
+    def search_by_field(self, field, value):
+        try:
+            nested_path = ".".join(field.split(".")[:-1])
 
-def main():
-    ps = PeopleSearch()
-    prompt = "I want someone who has worked on protein abundance"
+            # Specialized handling for education institution and other sensitive fields
+            if "education_institution" in field:
+                if isinstance(value, list):
+                    query = {
+                        "query": {
+                            "nested": {
+                                "path": nested_path,
+                                "query": {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "match_phrase": {
+                                                    field: {
+                                                        "query": v,
+                                                        "slop": 2  # Allow reordering
+                                                    }
+                                                }
+                                            } for v in value
+                                        ],
+                                        "minimum_should_match": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                else:
+                    query = {
+                        "query": {
+                            "nested": {
+                                "path": nested_path,
+                                "query": {
+                                    "bool": {
+                                        "must": {
+                                            "match_phrase": {
+                                                field: {
+                                                    "query": value,
+                                                    "slop": 2
+                                                }
+                                            }
+                                        },
+                                        "should": {
+                                            "match": {
+                                                field: {
+                                                    "query": value,
+                                                    "fuzziness": "AUTO"
+                                                }
+                                            }
+                                        },
+                                        "minimum_should_match": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+            else:  # Default behavior for other fields
+                if isinstance(value, list):
+                    query = {
+                        "query": {
+                            "nested": {
+                                "path": nested_path,
+                                "query": {
+                                    "bool": {
+                                        "should": [
+                                            {
+                                                "match": {
+                                                    field: {
+                                                        "query": v,
+                                                        "fuzziness": "AUTO",
+                                                        "operator": "or"
+                                                    }
+                                                }
+                                            } for v in value
+                                        ],
+                                        "minimum_should_match": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                else:
+                    query = {
+                        "query": {
+                            "nested": {
+                                "path": nested_path,
+                                "query": {
+                                    "match": {
+                                        field: {
+                                            "query": value,
+                                            "fuzziness": "AUTO",
+                                            "operator": "and"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-    results = ps.search_with_prompt(prompt)
-    print("FINAL SEARCH RESULTS:")
+            response = self.search(query)
+            return [hit['_source'] for hit in response.get('hits', {}).get('hits', [])]
 
-    with open("l2_results.json", "w") as file:
-        json.dump(results, file, indent=2)
+        except Exception as e:
+            print(f"Error searching by field '{field}': {e}")
+            return []
 
-if __name__ == "__main__":
-    main()
+
+
+    def search_with_prompt(self, prompt):
+        try:
+            parsed_fields = self.chat_gpt(prompt)
+
+            if not parsed_fields or "l2" not in parsed_fields or not parsed_fields["l2"]:
+                print("No valid fields parsed from the prompt.")
+                return []
+
+            parsed_fields = parsed_fields["l2"]
+            field_matches = {}
+            # relevant_career_and_publication_fields = [
+            #     "career_item.career_institution", 
+            #     "career_item.career_role", 
+            #     "journal_publications.journal_publication_title",
+            #     "book_publications.book_publication_title",
+            #     "other_publications.other_publication_title",
+            # ]
+
+            # Search each field individually and track matches
+            for field, value in parsed_fields.items():
+                documents = self.search_by_field(f"level_two_data.{field}", value)
+                print(f"Found {len(documents)} documents for field '{field}' with value '{value}'.")
+                for doc in documents:
+                    doc_id = doc.get("data", {}).get("orcid_id")
+                    if doc_id not in field_matches:
+                        field_matches[doc_id] = {"document": doc, "matched_fields": set()}
+                    field_matches[doc_id]["matched_fields"].add(field)
+
+            print(len(field_matches.keys()), "documents found in total.")
+            # Aggregate results and count matches
+            primary_results = []  # Matches career/publication fields
+            secondary_results = []  # Matches either career or publication fields but not both
+            other_results = []  # Matches neither career nor publication fields
+
+            for doc_id, match_info in field_matches.items():
+                doc = match_info["document"]
+                matched_fields = match_info["matched_fields"]
+                matched_fields_count = len(matched_fields)
+                doc["matched"] = matched_fields_count
+
+                # Categorize documents based on matched fields
+                has_career_match = any(field.startswith("career_item.career_role") for field in matched_fields)
+                has_publication_match = any(field.startswith("journal_publications.journal_publication_title") or
+                                            field.startswith("book_publications.book_publication_title") or
+                                            field.startswith("grant_research.grant_title") or
+                                            field.startswith("other_publications.other_publication_title") for field in matched_fields)
+
+                if has_career_match and has_publication_match:
+                    primary_results.append(doc)
+                elif has_career_match or has_publication_match:
+                    secondary_results.append(doc)
+                else:
+                    other_results.append(doc)
+
+            # Sort each category by number of matched fields in descending order
+            primary_results.sort(key=lambda x: x["matched"], reverse=True)
+            secondary_results.sort(key=lambda x: x["matched"], reverse=True)
+            other_results.sort(key=lambda x: x["matched"], reverse=True)
+
+            # Combine results with primary matches first, then secondary, then others
+            print(len(primary_results), "primary results")
+            print(len(secondary_results), "secondary results")
+            print(len(other_results), "other results")
+            results = primary_results + secondary_results + other_results
+            return results
+
+        except Exception as e:
+            print(f"Error in search_with_prompt: {e}")
+            return []

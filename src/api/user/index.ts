@@ -1,5 +1,5 @@
-import { search } from "./search";
+import { search, getCandidateProfile, getTieringProfile } from "./search";
 
-const User = { search };
+const User = { search, getCandidateProfile, getTieringProfile };
 
 export { User };

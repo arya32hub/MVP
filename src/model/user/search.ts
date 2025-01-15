@@ -4,6 +4,20 @@ interface Publication {
   publication_identifier: string;
 }
 
+interface Tier {
+  analysis: string;
+  score: string;
+}
+
+interface Tiering {
+  employment_history: Tier;
+  publication_trials: Tier;
+  speaking_engagement: Tier;
+  leadership_editorial?: Tier;
+  associations_journals?: Tier;
+  total_score: string;
+}
+
 interface Education {
   education_institution: string;
   education_city: string;
@@ -74,6 +88,7 @@ interface Data {
 interface Schema {
   data: Data;
   level_two_data: LevelTwoData;
+  tiering?: Tiering;
 }
 interface ISearchApiResponse {
   query: string;

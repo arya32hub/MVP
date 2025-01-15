@@ -99,10 +99,9 @@ export default function Search() {
   const query = searchParams.get("query");
   const [searchQuery, setSearchQuery] = useState(query);
 
-  const navigateToCandidateProfile = () => {
-    router.push("/candidate-profile");
+  const navigateToCandidateProfile = (orcidId: string) => {
+    router.push(`/candidate-profile?orcid_id=${orcidId}`);
   };
-
   // const response = use(API.User.search(query ? query : ""));
 
   useEffect(() => {
@@ -122,7 +121,7 @@ export default function Search() {
             response.results.map((results) => (
               <Candidate
                 key={results.data.orcid_id}
-                onClick={navigateToCandidateProfile}
+                onClick={() => navigateToCandidateProfile(results.data.orcid_id)}
                 {...results}
               />
             ))
