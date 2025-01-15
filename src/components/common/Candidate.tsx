@@ -3,20 +3,42 @@ import Image from "next/image";
 import { Bookmark, Button, Checkbox, Chips, Text } from ".";
 import { Icons } from "..";
 
+const generateAvatar = (initials: string, bgColor: string = "#6A5ACD") => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="123" height="123" style="border-radius: 16px; background: ${bgColor};">
+      <text x="50%" y="50%" font-size="48" fill="white" text-anchor="middle" alignment-baseline="middle" font-family="Arial, sans-serif">
+        ${initials}
+      </text>
+    </svg>
+  `;
+  
+  // Encode the SVG as Base64 using a UTF-8 encoder
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+};
+
 interface IOnClick {
   onClick?: () => void;
 }
 
 const Profile: React.FC<Partial<User.Search.Schema>> = (props) => {
+  const firstName = props.data?.first_name || "";
+  const lastName = props.data?.last_name || "";
+  const initials =
+    (firstName.charAt(0).toUpperCase() || "") +
+    (lastName.charAt(0).toUpperCase() || "");
+
+  // Generate dynamic avatar with initials
+  const avatarSrc = generateAvatar(initials);
+  
   return (
     <div className="flex flex-row gap-4">
-      <Image
-        alt={"Profile Picture"}
-        src={"/user.png"}
-        width={123}
-        height={123}
-        className="h-[123px] w-[123px] rounded-xl object-cover"
-      />
+        <Image
+          alt="Profile Picture"
+          src={avatarSrc}
+          width={75}
+          height={75}
+          className="h-[75px] w-[75px] rounded-xl object-cover"
+        />
       <div className="flex w-36 flex-col gap-[10px]">
         <div className="flex flex-row items-baseline gap-[7px]">
           <Text.H3 className="text-gray-900">
@@ -26,14 +48,14 @@ const Profile: React.FC<Partial<User.Search.Schema>> = (props) => {
         </div>
         <Text.BodySmallMedium className="flex flex-row gap-[7px] text-gray-500">
           <Icons.Briefcase />
-          Doctor
+          {props.level_two_data?.career_item?.[0]?.career_role}
         </Text.BodySmallMedium>
         <Text.BodySmallMedium className="flex flex-row gap-[7px] text-gray-500">
           <Icons.Language /> English
         </Text.BodySmallMedium>
         <Text.BodySmallMedium className="flex flex-row gap-[7px] text-gray-500">
           <Icons.PermanentJob />
-          GLINK INC
+          {props.level_two_data?.career_item?.[0]?.career_institution}
         </Text.BodySmallMedium>
       </div>
     </div>
@@ -63,7 +85,7 @@ const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
             {schema.level_two_data?.grant_research.length}+ Grant received
           </Chips>
           <Chips>
-            {schema.level_two_data?.career_item.length}+ Years of experience
+            {schema.level_two_data?.journal_publications.length}+ Journal Publications
           </Chips>
         </div>
         <Divider />

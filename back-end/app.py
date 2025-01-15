@@ -36,6 +36,7 @@ def retrieve_user_cv(input: InputText):
 @app.post("/process_input")
 async def process_input(input: InputText):
     results = ps.search_with_prompt(input.text)
+    results = results[:50]
     return {"query": input.text, "results": results}
 
 @app.post("/get_tier")

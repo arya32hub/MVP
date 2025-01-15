@@ -76,16 +76,38 @@ const Achievements = ({ education }: { education: User.Search.Schema["level_two_
   );
 };
 
+const generateAvatar = (initials: string, bgColor: string = "#6A5ACD") => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="123" height="123" style="border-radius: 16px; background: ${bgColor};">
+      <text x="50%" y="50%" font-size="48" fill="white" text-anchor="middle" alignment-baseline="middle" font-family="Arial, sans-serif">
+        ${initials}
+      </text>
+    </svg>
+  `;
+  
+  // Encode the SVG as Base64 using a UTF-8 encoder
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+};
+
 const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
+  const firstName = user.first_name || "";
+  const lastName = user.last_name || "";
+  const initials =
+    (firstName.charAt(0).toUpperCase() || "") +
+    (lastName.charAt(0).toUpperCase() || "");
+
+  // Generate dynamic avatar with initials
+  const avatarSrc = generateAvatar(initials);
+  
   return (
     <div className="w-[306px] rounded-2xl bg-white px-6 pb-6 pt-12 shadow-md">
       <div className="flex flex-col items-center justify-center">
-        <Image
-          src={"/profile-image.jpeg"}
-          width={210}
-          height={210}
-          className="inline aspect-square rounded-xl object-cover"
-          alt={"Profile Image"}
+      <Image
+          alt="Profile Picture"
+          src={avatarSrc}
+          width={75}
+          height={75}
+          className="h-[75px] w-[75px] rounded-xl object-cover"
         />
       </div>
       <div className="mt-5 flex flex-col">
@@ -101,7 +123,7 @@ const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
             <Icons.Briefcase /> {user.keywords.join(", ")}
           </Text.BodyMedium>
           <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-            <Icons.Language /> {user.emails.join(", ")}
+            <Icons.Language /> EN
           </Text.BodyMedium>
         </div>
         <Button.PrimaryBig className="mt-5">Save</Button.PrimaryBig>
