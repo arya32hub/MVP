@@ -37,7 +37,7 @@ const getCandidateProfile: TGetCandidateProfile = async (orcidId: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     return response.data;
@@ -58,7 +58,7 @@ const getTieringProfile: TTieringProfile = async (orcidId: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     return response.data;
@@ -66,6 +66,6 @@ const getTieringProfile: TTieringProfile = async (orcidId: string) => {
     console.log("API ERROR \n", error);
     throw new Error("Failed to fetch candidate profile");
   }
-}
+};
 
-export { search, getCandidateProfile, getTieringProfile };
+export { getCandidateProfile, getTieringProfile, search };

@@ -1,330 +1,39 @@
 "use client";
 
+import { Button, CandidateProfile, Text } from "@/components";
+import { useCandidateProfile, useTieringData } from "@/hooks";
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
-import { Button, Icons, Text } from "@/components";
-import React, { useEffect, useState } from "react";
-import { API } from "@/api";
-import { User } from "@/model";
-import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
-
-
-// const UserBio = ({ user }: { user: User.Search.Schema["data"] }) => {
-//   return (
-//     <div className="flex flex-col gap-4">
-//       <Text.H3 className="flex flex-row gap-3 text-gray-900">
-//         <Icons.FileSearch /> User Bio
-//       </Text.H3>
-//       <Text.Body className="text-tornado">{user.bio}</Text.Body>
-//     </div>
-//   );
-// }
-
-
-const CareerItem = ({ careerItems }: { careerItems: User.Search.Schema["level_two_data"]["career_item"] }) => {
-  if (!careerItems.length) return null;
-  return (
-    <>
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.PermanentJob /> Employment History
-      </Text.H3>
-      {careerItems.map((career, index) => (
-        <div key={index} className="flex flex-row gap-3">
-          <Text.BodySmall className="flex h-[33px] w-[155px] flex-col items-center justify-center rounded-[32px] border-[1px] border-mountain-lake px-[6px] text-[#7B7C7E]">
-            {career.career_start_date}-{career.career_end_date}
-          </Text.BodySmall>
-          <div>
-            <div className="mt-[13px] h-[6px] w-[6px] self-center rounded-full bg-mountain-lake" />
-          </div>
-          <div className="flex w-full flex-col pt-1">
-            <Text.H3 className="flex h-full flex-row border-b-[1px] border-smoke pb-2 font-normal text-main-blue">
-              {career.career_role}
-            </Text.H3>
-            <Text.Body className="mt-2 text-tornado">{career.career_institution}</Text.Body>
-          </div>
-        </div>
-      ))}
-    </>
-  );
-};
-
-
-const Achievements = ({ education }: { education: User.Search.Schema["level_two_data"]["education"] }) => {
-  if (!education.length) return null;
-  return (
-    <>
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.Student /> Education
-      </Text.H3>
-      {education.map((edu, index) => (
-        <div key={index} className="flex flex-row gap-3">
-          <Text.BodySmall className="flex h-[33px] w-[155px] flex-col items-center justify-center rounded-[32px] border-[1px] border-mountain-lake px-[6px] text-[#7B7C7E]">
-            {edu.education_start_date}-{edu.education_end_date}
-          </Text.BodySmall>
-          <div>
-            <div className="mt-[13px] h-[6px] w-[6px] self-center rounded-full bg-mountain-lake" />
-          </div>
-          <div className="flex w-full flex-col pt-1">
-            <Text.H3 className="flex h-full flex-row border-b-[1px] border-smoke pb-2 font-normal text-main-blue">
-              {edu.education_institution}
-            </Text.H3>
-            <Text.Body className="mt-2 text-tornado">{edu.education_department}</Text.Body>
-          </div>
-        </div>
-      ))}
-    </>
-  );
-};
-
-const generateAvatar = (initials: string, bgColor: string = "#6A5ACD") => {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="123" height="123" style="border-radius: 16px; background: ${bgColor};">
-      <text x="50%" y="50%" font-size="48" fill="white" text-anchor="middle" alignment-baseline="middle" font-family="Arial, sans-serif">
-        ${initials}
-      </text>
-    </svg>
-  `;
-  
-  // Encode the SVG as Base64 using a UTF-8 encoder
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
-};
-
-const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
-  const firstName = user.first_name || "";
-  const lastName = user.last_name || "";
-  const initials =
-    (firstName.charAt(0).toUpperCase() || "") +
-    (lastName.charAt(0).toUpperCase() || "");
-
-  // Generate dynamic avatar with initials
-  const avatarSrc = generateAvatar(initials);
-  
-  return (
-    <div className="w-[306px] rounded-2xl bg-white px-6 pb-6 pt-12 shadow-md">
-      <div className="flex flex-col items-center justify-center">
-      <Image
-          alt="Profile Picture"
-          src={avatarSrc}
-          width={75}
-          height={75}
-          className="h-[75px] w-[75px] rounded-xl object-cover"
-        />
-      </div>
-      <div className="mt-5 flex flex-col">
-        <Text.H2 className="text-gray-900">
-          {user.first_name} {user.last_name}
-        </Text.H2>
-        <div className="my-5 border-b-[1px] border-smoke" />
-        <div className="flex flex-col gap-4">
-          <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-            <Icons.Location /> {user.contact_address.join(", ")}
-          </Text.BodyMedium>
-          <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-            <Icons.Briefcase /> {user.keywords.join(", ")}
-          </Text.BodyMedium>
-          <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-            <Icons.Language /> EN
-          </Text.BodyMedium>
-        </div>
-        <Button.PrimaryBig className="mt-5">Save</Button.PrimaryBig>
-      </div>
-    </div>
-  );
-};
-
-const BookPublications = ({ publications, title }: { publications: User.Search.Schema["level_two_data"]["book_publications"], title: string }) => {
-  if (!publications.length) return null;
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.FileSearch /> {title}
-      </Text.H3>
-      {publications.map((pub, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="text-main-blue font-semibold">{pub.book_publication_title}</Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            ({pub.book_publication_end_date}). {pub.book_publication_bookname}
-          </Text.BodySmall>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const JournalPublications = ({ publications, title }: { publications: User.Search.Schema["level_two_data"]["journal_publications"], title: string }) => {
-  if (!publications.length) return null;
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.FileSearch /> {title}
-      </Text.H3>
-      {publications.map((pub, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="text-main-blue font-semibold">{pub.journal_publication_title}</Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            ({pub.journal_publication_end_date}). {pub.journal_publication_journal_name}
-          </Text.BodySmall>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const OtherPublications = ({ publications, title }: { publications: User.Search.Schema["level_two_data"]["other_publications"], title: string }) => {
-  if (!publications.length) return null;
-
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.FileSearch /> {title}
-      </Text.H3>
-      {publications.map((pub, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="text-main-blue font-semibold">{pub.publication_title}</Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            ({pub.publication_end_date}). {pub.publication_identifier}
-          </Text.BodySmall>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const Grants = ({ grants }: { grants: User.Search.Schema["level_two_data"]["grant_research"] }) => {
-  if (!grants.length) return null;
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.Certificate /> Grants Received
-      </Text.H3>
-      {grants.map((grant, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="text-main-blue font-semibold">{grant.grant_title}</Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            {grant.grant_agency}, {grant.grant_end_date}
-          </Text.BodySmall>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const ReviewerRoles = ({ roles }: { roles: User.Search.Schema["level_two_data"]["reviewer_role"] }) => {
-  if (!roles.length) return null;
-
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.FileSearch /> Reviewer Roles
-      </Text.H3>
-      {roles.map((role, index) => (
-        <div key={index} className="flex flex-col gap-2">
-          <Text.BodySmall className="text-main-blue font-semibold">{role.reviewer_role}</Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            {role.reviewer_organization}, {role.reviewer_end_date}
-          </Text.BodySmall>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const TieringSection = ({ tiering }: { tiering: User.Search.Schema["tiering"] | null }) => {
-  
-  if (!tiering) return null;
-
-
-  return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Text.H3 className="flex flex-row gap-3 text-gray-900">
-        <Icons.FileSearch /> Tiering Data
-      </Text.H3>
-      {Object.entries(tiering).map(([key, value]) =>
-        key !== "total_score" && value ? (
-          <div key={key} className="flex flex-col gap-2">
-            <Text.BodySmall className="text-main-blue font-semibold">
-              {key.replace(/_/g, " ").toUpperCase()}
-            </Text.BodySmall>
-            <Text.BodySmall className="text-tornado">
-              Analysis: {value.analysis}, Score: {value.score}
-            </Text.BodySmall>
-          </div>
-        ) : null
-      )}
-      {tiering.total_score && (
-        <div className="flex flex-col gap-2">
-          <Text.BodySmall className="text-green-600 font-bold text-xl">
-            Total Score: {tiering.total_score}
-          </Text.BodySmall>
-        </div>
-      )}
-    </div>
-  );
-};
-
-
-const Bio = ({ levelTwoData, tiering }: { levelTwoData: User.Search.Schema["level_two_data"], tiering: User.Search.Schema["tiering"] | null }) => {
-  return (
-    <div className="flex w-full flex-col gap-[50px] rounded-2xl bg-white px-6 pb-11 pt-6 shadow-md">
-      <CareerItem careerItems={levelTwoData.career_item} />
-      <Achievements education={levelTwoData.education} />
-
-      <JournalPublications publications={levelTwoData.journal_publications} title="Journal Publications" />
-      <BookPublications publications={levelTwoData.book_publications} title="Book Publications" />
-      <OtherPublications publications={levelTwoData.other_publications} title="Other Publications" />
-      <Grants grants={levelTwoData.grant_research} />
-      <ReviewerRoles roles={levelTwoData.reviewer_role} />
-      <TieringSection tiering={tiering} />
-    </div>
-  );
-};
-
-const CandidateProfile = () => {
-  const [profile, setProfile] = useState<User.Search.Schema | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [tiering, setTiering] = useState<User.Search.Schema["tiering"] | null>(null); // State for tiering data
-  const [tieringLoading, setTieringLoading] = useState<boolean>(false); // Loading state for button
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+const CandidateProfileScreen = () => {
   const searchParams = useSearchParams();
   const orcidId = searchParams.get("orcid_id");
 
-  useEffect(() => {
-    if (orcidId) {
-      API.User.getCandidateProfile(orcidId)
-        .then((data) => {
-          setProfile(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setError("Failed to load profile");
-          setLoading(false);
-        });
-    }
-  }, [orcidId]);
+  const {
+    profile,
+    loading,
+    error: profileError,
+  } = useCandidateProfile(orcidId);
+  const {
+    tiering,
+    loading: tieringLoading,
+    error: tieringError,
+    fetchTiering,
+  } = useTieringData(orcidId);
 
-  const handleGetTiering = async () => {
-    if (!orcidId) return;
-    
-    setTieringLoading(true);
-    try {
-      const tieringData = await API.User.getTieringProfile(orcidId);
-      setTiering(tieringData.tiering); 
-    } catch (error) {
-      setError("Failed to fetch tiering data");
-      console.error("Tiering API Error:", error);
-    } finally {
-      setTieringLoading(false);
+  const error = useMemo(() => {
+    if (profileError && tieringError) {
+      return `${profileError} | ${tieringError}`;
     }
-  };
-
+    return profileError || tieringError || null;
+  }, [profileError, tieringError]);
 
   if (loading) {
     return (
       <div role="status">
         <svg
           aria-hidden="true"
-          className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"
+          className="h-8 w-8 animate-spin fill-mountain-lake text-gray-200 dark:text-gray-600"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -353,16 +62,18 @@ const CandidateProfile = () => {
 
   return (
     <div className="mx-16 flex flex-row gap-4 px-[131px]">
-      <div className="absolute top-4 right-4">
-        <Button.PrimarySmall onClick={handleGetTiering}>
+      <div className="absolute right-4 top-4">
+        <Button.PrimarySmall onClick={fetchTiering}>
           {tieringLoading ? "Loading..." : "Get Tiering"}
         </Button.PrimarySmall>
       </div>
-
-      <Profile user={profile.data} />
-      <Bio levelTwoData={profile.level_two_data} tiering={tiering} />
+      <CandidateProfile.Profile user={profile.data} />
+      <CandidateProfile.Bio
+        levelTwoData={profile.level_two_data}
+        tiering={tiering}
+      />
     </div>
   );
 };
 
-export default CandidateProfile;
+export default CandidateProfileScreen;
