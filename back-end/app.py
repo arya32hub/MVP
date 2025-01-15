@@ -42,8 +42,8 @@ async def process_input(input: InputText):
 @app.post("/get_tier")
 def get_tier(input: InputText):
     user = retrieve_user_cv(input)
-    user['tiering'] = tiering(user, openai_client)
-    return {'tiering' : user}
+    tier = tiering(user, openai_client)
+    return {'tiering' : tier}
 
 
 if __name__ == "__main__":

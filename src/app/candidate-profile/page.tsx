@@ -230,14 +230,16 @@ const ReviewerRoles = ({ roles }: { roles: User.Search.Schema["level_two_data"][
 };
 
 const TieringSection = ({ tiering }: { tiering: User.Search.Schema["tiering"] | null }) => {
+  
   if (!tiering) return null;
+
 
   return (
     <div className="flex flex-1 flex-col gap-4">
       <Text.H3 className="flex flex-row gap-3 text-gray-900">
         <Icons.FileSearch /> Tiering Data
       </Text.H3>
-      {Object.entries(tiering).map(([key, value]) => (
+      {Object.entries(tiering).map(([key, value]) =>
         key !== "total_score" && value ? (
           <div key={key} className="flex flex-col gap-2">
             <Text.BodySmall className="text-main-blue font-semibold">
@@ -248,7 +250,7 @@ const TieringSection = ({ tiering }: { tiering: User.Search.Schema["tiering"] | 
             </Text.BodySmall>
           </div>
         ) : null
-      ))}
+      )}
       {tiering.total_score && (
         <div className="flex flex-col gap-2">
           <Text.BodySmall className="text-green-600 font-bold text-xl">
@@ -259,6 +261,7 @@ const TieringSection = ({ tiering }: { tiering: User.Search.Schema["tiering"] | 
     </div>
   );
 };
+
 
 const Bio = ({ levelTwoData, tiering }: { levelTwoData: User.Search.Schema["level_two_data"], tiering: User.Search.Schema["tiering"] | null }) => {
   return (
@@ -302,17 +305,19 @@ const CandidateProfile = () => {
 
   const handleGetTiering = async () => {
     if (!orcidId) return;
-
+    
     setTieringLoading(true);
     try {
       const tieringData = await API.User.getTieringProfile(orcidId);
-      setTiering(tieringData.tiering); // Assuming `tiering` is the new field in the response
+      setTiering(tieringData.tiering); 
     } catch (error) {
       setError("Failed to fetch tiering data");
+      console.error("Tiering API Error:", error);
     } finally {
       setTieringLoading(false);
     }
   };
+
 
   if (loading) {
     return (
