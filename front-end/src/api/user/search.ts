@@ -8,7 +8,7 @@ type TTieringProfile = (orcidId: string) => Promise<User.Search.Schema>;
 
 const search: TSearch = async (keyword: string) => {
   const response = await axios.post(
-    `http://localhost:8000/process_input`,
+    `https://glnk-search-fwarb4d8drdudrgu.westus-01.azurewebsites.net/process_input`,
     {
       text: keyword,
     },
@@ -25,7 +25,7 @@ const search: TSearch = async (keyword: string) => {
 const getCandidateProfile: TGetCandidateProfile = async (orcidId: string) => {
   try {
     const response = await axios.post(
-      `http://localhost:8000/get_user_data`,
+      `https://glnk-search-fwarb4d8drdudrgu.westus-01.azurewebsites.net/get_user_data`,
       {
         text: orcidId,
       },
@@ -46,7 +46,7 @@ const getCandidateProfile: TGetCandidateProfile = async (orcidId: string) => {
 const getTieringProfile: TTieringProfile = async (orcidId: string) => {
   try {
     const response = await axios.post(
-      `http://localhost:8000/get_tier`,
+      `https://glnk-search-fwarb4d8drdudrgu.westus-01.azurewebsites.net/get_tier`,
       {
         text: orcidId,
       },

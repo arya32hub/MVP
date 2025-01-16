@@ -30,19 +30,18 @@ const CandidateProfileScreen = () => {
   }, [profileError, tieringError]);
 
   if (error) {
-    return <Text.Body className="text-red-500">{error}</Text.Body>;
+    return <Text.Body className="text-red-500">{String(error)}</Text.Body>;
   }
 
   return (
     <div className="mx-16 flex h-screen flex-row gap-4 px-[131px]">
       {loading ? (
-        <div className="flex w-full flex-row items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           <LoadingSpinner />
         </div>
-      ) : (
-        <></>
-      )}
-      {!tiering ? (
+      ) : null}
+
+      {!tiering && (
         <div className="absolute right-4 top-4">
           <Button.PrimarySmall
             className="animate-bounce"
@@ -51,20 +50,26 @@ const CandidateProfileScreen = () => {
             {tieringLoading ? "Loading..." : "Get Tiering"}
           </Button.PrimarySmall>
         </div>
-      ) : (
-        <></>
       )}
 
-      {profile ? (
+      {profile && (
         <>
-          <CandidateProfile.Profile user={profile} />
-          <CandidateProfile.Bio
-            levelTwoData={profile.level_two_data}
-            tiering={tiering}
-          />
+          {/* Profile Section (Left Side) */}
+          <div className="flex w-1/3 flex-col">
+            <CandidateProfile.Profile user={profile} />
+          </div>
+
+          {/* Bio and Other Sections (Right Side) */}
+          <div className="flex w-2/3 flex-col gap-4">
+            <div className="rounded-lg border border-gray-300 p-6 bg-white">
+              <CandidateProfile.Bio
+                levelTwoData={profile.level_two_data}
+                tiering={tiering}
+              />
+            </div>
+            {/* Add other sections like Journal Publications here */}
+          </div>
         </>
-      ) : (
-        <></>
       )}
     </div>
   );

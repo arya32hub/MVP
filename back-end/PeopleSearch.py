@@ -160,6 +160,7 @@ class PeopleSearch(Search):
                         "10) Always include separate fields for each matching category (e.g., all relevant types of publications).\n"
                         "11) If the query requires career_role, then also include the same value for that field accross all publication types (journal, book, other).\n"
                         "12) Add additional values for some fields to improve search of the query intent (i.e. if looking for a neurosurgeon, add several keywords in publications to cover the same field like neurosurgery and brain surgery, ...).\n"
+                        "13) If there is no especific requirement about the location of the candidate, then do not include the key_metrics.location field in your response.\n"
                     )
                     }
 ,
