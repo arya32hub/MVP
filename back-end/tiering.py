@@ -73,14 +73,12 @@ def calculate_score(openai_client, score_type, relevant_data):
     response_format = config['response_format']
     try:
         response = openai_client.beta.chat.completions.parse(
-            model="gpt-4o-mini-2024-07-18",
+            model="o1",
             messages=[
                 {"role": "system", "content": f"You are an AI assistant tasked with analyzing CV data and assigning scores based on specific criteria for {score_type}."},
                 {"role": "user", "content": prompt}
             ],
             response_format=response_format,
-            temperature=0.2,
-            max_tokens=1000
         )
 
         result = response.choices[0].message.content

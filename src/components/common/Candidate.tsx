@@ -51,7 +51,7 @@ const Profile: React.FC<Partial<User.Search.Schema>> = (props) => {
           {props.level_two_data?.career_item?.[0]?.career_role}
         </Text.BodySmallMedium>
         <Text.BodySmallMedium className="flex flex-row gap-[7px] text-gray-500">
-          <Icons.Language /> English
+          <Icons.Location /> {props.key_metrics?.location?.join(", ")}
         </Text.BodySmallMedium>
         <Text.BodySmallMedium className="flex flex-row gap-[7px] text-gray-500">
           <Icons.PermanentJob />
@@ -82,10 +82,13 @@ const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
 
         <div className="flex h-full flex-col gap-2">
           <Chips>
-            {schema.level_two_data?.grant_research.length}+ Grant received
+            {schema.level_two_data?.grant_research.length}+ Grants received
           </Chips>
           <Chips>
             {schema.level_two_data?.journal_publications.length}+ Journal Publications
+          </Chips>
+          <Chips>
+            {schema.key_metrics?.yoe}+ Years of Experience
           </Chips>
         </div>
         <Divider />

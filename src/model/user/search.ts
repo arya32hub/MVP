@@ -65,6 +65,11 @@ interface ReviewerRole {
   reviewer_organization: string;
 }
 
+interface KeyMetrics {
+  yoe: string;
+  location: string[];
+}
+
 interface LevelTwoData {
   other_publications: Publication[];
   education: Education[];
@@ -88,6 +93,7 @@ interface Data {
 interface Schema {
   data: Data;
   level_two_data: LevelTwoData;
+  key_metrics: KeyMetrics;
   tiering?: Tiering;
 }
 interface ISearchApiResponse {

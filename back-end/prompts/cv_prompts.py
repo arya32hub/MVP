@@ -64,7 +64,7 @@ def publication_trials_score_prompt(relevant_data):
     return f"""Analyze the following CV data for an M.D. applicant and assign a score based on these criteria:
 
 1 point (assign if any of these are true):
-- Author or editor of a leading textbook for the specialty/TA
+- Author or editor of a leading scientific journal or textbook for the specialty/Therapeutic Area (TA)
 - Work that is often published in leading journals relevant to the TA area based on high-level impact factor
 - Often engaged as a principal investigator, coordinating investigator, or steering committee member for medical device, pharma, or government-sponsored, multi-centered clinical trials
 - Winner/recipient of national scientific award, delivered by national bodies (excluding conferences)

@@ -4,15 +4,20 @@ import { User } from "@/model";
 import { generateAvatar } from "@/utils";
 import Image from "next/image";
 
-const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
-  const firstName = user.first_name || "";
-  const lastName = user.last_name || "";
+const Profile = ({ user }: { user: User.Search.Schema }) => {
+  const firstName = user.data.first_name || "";
+  const lastName = user.data.last_name || "";
   const initials =
     (firstName.charAt(0).toUpperCase() || "") +
     (lastName.charAt(0).toUpperCase() || "");
 
   // Generate dynamic avatar with initials
   const avatarSrc = generateAvatar(initials);
+  const location = user.key_metrics?.location?.join(", ");
+
+  console.log("User:", user); // Visible in the browser's developer console
+  console.log("Key Metrics:", user.key_metrics); // Visible in the browser's developer console
+  console.log("location", location);
 
   return (
     <div>
@@ -28,31 +33,33 @@ const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
         </div>
         <div className="mt-5 flex flex-col">
           <Text.H2 className="text-gray-900">
-            {user.first_name} {user.last_name}
+            {user.data.first_name} {user.data.last_name}
           </Text.H2>
           <div className="my-5 border-b-[1px] border-smoke" />
           <div className="flex flex-col gap-4">
-            {user.contact_address.length > 0 ? (
+            {user.key_metrics?.location?.length > 0 && (
               <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-                <Icons.Location /> {user.contact_address.join(", ")}
+                <Icons.Location /> {user.key_metrics.location.join(", ")}
               </Text.BodyMedium>
-            ) : (
-              <></>
             )}
 
             <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
               <div>
                 <Icons.Briefcase />
               </div>
+              {user.level_two_data.career_item?.[0]?.career_role}
+            </Text.BodyMedium>
 
-              {user.keywords.join(", ")}
-            </Text.BodyMedium>
-            <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
-              <div>
-                <Icons.Language />
-              </div>
-              EN
-            </Text.BodyMedium>
+            {/* Conditional rendering for education */}
+            {user.level_two_data.education?.length > 0 && (
+              <Text.BodyMedium className="flex flex-row items-center gap-[9px] text-tornado">
+                <div>
+                  <Icons.Student />
+                </div>
+                {user.level_two_data.education[0]?.education_degree} at{" "}
+                {user.level_two_data.education[0]?.education_institution}
+              </Text.BodyMedium>
+            )}
           </div>
           <Button.PrimaryBig className="mt-5">Save</Button.PrimaryBig>
         </div>
@@ -62,3 +69,4 @@ const Profile = ({ user }: { user: User.Search.Schema["data"] }) => {
 };
 
 export { Profile };
+

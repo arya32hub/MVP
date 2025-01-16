@@ -31,7 +31,7 @@ class InputText(BaseModel):
 
 @app.post("/get_user_data")
 def retrieve_user_cv(input: InputText):
-    return es.get(index='candidates', id=input.text).get('_source')
+    return es.get(index='candidates-dev', id=input.text).get('_source')
 
 @app.post("/process_input")
 async def process_input(input: InputText):

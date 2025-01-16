@@ -19,3 +19,20 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.truncate-box {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 200px; /* Adjust based on your design */
+  transition: all 0.3s ease;
+}
+
+.truncate-box:hover {
+  white-space: normal;
+  max-width: 100%; /* Expand to full width on hover */
+  padding: 12px; /* Adjust for better readability */
+  background-color: #f0f8ff; /* Optional: Slightly change background for hover effect */
+  z-index: 10; /* Ensure it appears above other elements */
+  position: relative; /* Required for z-index */
+}

@@ -8,19 +8,19 @@ const OtherPublications = ({
   publications: User.Search.Schema["level_two_data"]["other_publications"];
   title: string;
 }) => {
-  if (!publications.length) return null;
+  if (!publications.length || !title) return null;
+
+  const filteredPublications = publications.filter((pub) => pub.publication_title);
 
   return (
     <div className="flex flex-1 flex-col gap-4">
       <Text.H3 className="flex flex-row gap-3 text-gray-900">
         <Icons.FileSearch /> {title}
       </Text.H3>
-      {publications
+      {filteredPublications
         .map((pub) => ({
-          date: `${new Date(pub.publication_end_date).getFullYear()}
-                  `,
+          date: `${new Date(pub.publication_end_date).getFullYear()}`,
           heading: pub.publication_title,
-          // accomplishments: [pub.publication_identifier],
         }))
         .map((props, index) => (
           <CandidateProfile.CareerTimelineItem {...props} key={index} />

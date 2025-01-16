@@ -18,29 +18,38 @@ class PeopleSearch(Search):
         Implementation of the abstract method to retrieve a document by ID.
         """
         try:
-            return self.es.get(index="candidates", id=id).get("_source")
+            return self.es.get(index="candidates-dev", id=id).get("_source")
         except Exception as e:
             print(f"Error retrieving document: {e}")
             return {}
 
     def retrieve_user_level_2_cv(self, id):
-        return self.es.get(index='candidates', id=id).get('_source')['level_two_data']
+        return self.es.get(index='candidates-dev', id=id).get('_source')['level_two_data']
 
     def chat_gpt(self, prompt):
         try:
             response = self.client.chat.completions.create(
-                model="chatgpt-4o-latest",
-                messages=[
-                   {
+            model="o1",
+            messages=[
+                    {
                     "role": "system",
                     "content": (
-                        "You are a helper that takes a user prompt and maps it to the level_two_data (L2) fields in our CV schema. "
-                        "Return a JSON with EXACTLY ONE TOP-LEVEL KEY: 'l2'. The value of 'l2' must be an object.\n\n"
-
+                        "You are a helper that maps user queries to the `level_two_data` (L2) fields and `key_metrics` fields in our CV schema. "
+                        "Return a JSON with EXACTLY TWO TOP-LEVEL KEYS: 'l2' and 'key_metrics'. Both 'l2' and 'key_metrics' must be objects.\n\n"
+                        
                         "============================================================\n"
-                        "CORRECT EXAMPLES (MANY FIELDS):\n"
+                        "IMPORTANT:\n"
+                        "1) ANY query related to current employment, work, or job roles should be looked at comprehensively across the following:\n"
+                        "   - ALL available publication types (`journal_publications`, `book_publications`, `other_publications`)\n"
+                        "   - `grant_research` category\n"
+                        "   - Relevant fields in `career_item`.\n"
+                        "This ensures we map the intent to all possible fields that may pertain to employment or research roles.\n"
+                        "2) If user intent includes references to years of experience, employment, or location, always include `key_metrics.yoe` and `key_metrics.location` fields.\n\n"
+                        
+                        "============================================================\n"
+                        "CORRECT EXAMPLES (MULTIPLE FIELDS):\n"
                         "------------------------------------------------------------\n"
-                        "Single fields:\n"
+                        "Example with both L2 and key_metrics fields:\n"
                         "{\n"
                         "  \"l2\": {\n"
                         "    \"other_publications.other_publication_end_date\": \"1983\",\n"
@@ -49,31 +58,41 @@ class PeopleSearch(Search):
                         "    \"career_item.career_role\": \"Associate Professor\",\n"
                         "    \"education.education_degree\": \"Ph.D.\",\n"
                         "    \"education.education_institution\": \"Mayo Graduate School\"\n"
+                        "  },\n"
+                        "  \"key_metrics\": {\n"
+                        "    \"location\": \"US\",\n"
+                        "    \"yoe\": 10\n"
                         "  }\n"
                         "}\n\n"
-
-                        "Multiple fields:\n"
+                        
+                        "Example with multiple publication types:\n"
                         "{\n"
-                        "    \"l2\": {\n"
-                        "        \"journal_publications.journal_publication_title\": [\"Gene Therapy Research\", \"],\n"
-                        "        \"journal_publications.journal_publication_date\": \"2019\",\n"
-                        "        \"education.education_degree\": \"MD\",\n"
-                        "        \"career_item.career_institution\": \"Johns Hopkins University\"\n"
-                        "    }\n"
+                        "  \"l2\": {\n"
+                        "    \"journal_publications.journal_publication_title\": [\"Gene Therapy Research\"],\n"
+                        "    \"journal_publications.journal_publication_date\": \"2019\",\n"
+                        "    \"book_publications.book_publication_title\": [\"Gene Therapy Research\"],\n"
+                        "    \"other_publications.other_publication_title\": [\"Gene Therapy Research\"],\n"
+                        "    \"education.education_degree\": \"MD\",\n"
+                        "    \"career_item.career_institution\": \"Johns Hopkins University\"\n"
+                        "  },\n"
+                        "  \"key_metrics\": {\n"
+                        "    \"location\": \"DE\",\n"
+                        "    \"yoe\": 8\n"
+                        "  }\n"
                         "}\n\n"
-
+                        
                         "============================================================\n"
                         "L2 FIELDS (inside 'level_two_data.<FIELD_NAME>'): \n"
                         "------------------------------------------------------------\n"
                         "Below are the top-level category names and example subfields:\n\n"
-
+                        
                         "other_publications:\n"
                         "  - publication_title (str)\n"
                         "  - publication_end_date (str)\n"
                         "  - publication_type (str)\n"
                         "  - publication_publisher (str)\n"
                         "  - publication_identifier (str)\n\n"
-
+                        
                         "education:\n"
                         "  - education_institution (str)    <== can be a list if user said 'Harvard and MIT'\n"
                         "  - education_city (str)\n"
@@ -83,7 +102,7 @@ class PeopleSearch(Search):
                         "  - education_degree (str)\n"
                         "  - education_start_date (object)\n"
                         "  - education_end_date (object)\n\n"
-
+                        
                         "career_item:\n"
                         "  - career_institution (str)\n"
                         "  - career_city (str)\n"
@@ -92,54 +111,64 @@ class PeopleSearch(Search):
                         "  - career_role (str)\n"
                         "  - career_start_date (object)\n"
                         "  - career_end_date (object)\n\n"
-
+                        
                         "grant_research:\n"
                         "  - grant_title (str)\n"
                         "  - grant_agency (str)\n"
                         "  - grant_start_date (object)\n"
                         "  - grant_end_date (object)\n\n"
-
+                        
                         "journal_publications:\n"
                         "  - journal_publication_title (str)\n"
                         "  - journal_publication_date (object)\n"
                         "  - journal_publication_name (str)\n\n"
-
+                        
                         "book_publications:\n"
                         "  - book_publication_title (str)\n"
                         "  - book_publication_bookname (str)\n"
                         "  - book_publication_end_date (object)\n"
                         "  - book_publication_publisher (str)\n\n"
-
+                        
                         "reviewer_role:\n"
                         "  - reviewer_role (str)\n"
                         "  - reviewer_end_date (object)\n"
                         "  - reviewer_organization (str)\n\n"
-
+                        
+                        "============================================================\n"
+                        "KEY METRICS FIELDS: key_metrics\n"
+                        "------------------------------------------------------------\n"
+                        "Below are the `key_metrics` fields:\n\n"
+                        "yoe:\n"
+                        "  - Type: integer\n"
+                        "  - Example: key_metrics.yoe = 10\n\n"
+                        "location:\n"
+                        "  - Type: text with keyword field\n"
+                        "  - ONLY USE the country code (not full country name)\n"
+                        "  - Example: key_metrics.location = 'US'\n\n"
+                        
                         "============================================================\n"
                         "RULES:\n"
-                        "1) Return strictly valid JSON with exactly one top-level key: 'l2'.\n"
-                        "2) Each key must be <CATEGORY>.<SUBFIELD>, e.g. 'other_publications.other_publication_end_date'.\n"
-                        "3) Apply to as many as applies of book_publications, journal_publications, and other_publications. \n"
-                        "   (If the user explicitly mentions a second publication type, choose the most relevant single type for their request.)\n"
-                        "4) Combine multiple references in the user prompt into multiple keys.\n"
-                        "5) Never return a single big string in 'l2'. Each field must be an individual key-value.\n"
-                        "6) Include only terms that are essential for searching (e.g., 'breast cancer' instead of 'research on breast cancer').\n"
-                        "7) Use correct institution or city names (no abbreviations like 'UChicago').\n"
-                        "8) Do not include extra words in the value, only relevant for the search.\n"
-                        "9) To improve search, add additional keywords similar to the user search for all experience or research related topics.\n"
-                        "9) Any work or experience topic or research-related phrase must be placed in a publication and 'grant_research' field and 'career_iterm' field.\n"
-                        "10) A single field can hold several comma-separated or array-based entries if the user says 'and.' E.g.\n"
-                        "    education.education_institution: [\"Harvard University\", \"Massachusetts Institute of Technology\"]\n\n"
-                        "11) Write as many fields as possible to improve the search results.\n"
+                        "1) Return strictly valid JSON with exactly two top-level keys: 'l2' and 'key_metrics'.\n"
+                        "2) Include all applicable `key_metrics` fields when the user specifies years of experience (yoe), or location.\n"
+                        "3) Use the `key_metrics.location` field as the country code (e.g., 'US', not 'United States').\n"
+                        "4) For publication types (e.g., journal, book, other, grant_research), if the user specifies one type, add equivalent keys for other types to ensure comprehensive mapping.\n"
+                        "5) Combine multiple references in the user prompt into multiple keys and include additional relevant fields.\n"
+                        "6) Each key in 'l2' must follow the format: <CATEGORY>.<SUBFIELD> (e.g., 'career_item.career_institution').\n"
+                        "7) If the user uses words like 'over', 'at least', or 'more than' for yoe, convert these into exact numbers and include them (e.g., 10 for 'over 10 years').\n"
+                        "8) Map ambiguous terms as broadly as possible across the schema to improve search coverage.\n"
+                        "9) Do not include unrelated fields or extra words in the values.\n"
+                        "10) Always include separate fields for each matching category (e.g., all relevant types of publications).\n"
+                        "11) If the query requires career_role, then also include the same value for that field accross all publication types (journal, book, other).\n"
+                        "12) Add additional values for some fields to improve search of the query intent (i.e. if looking for a neurosurgeon, add several keywords in publications to cover the same field like neurosurgery and brain surgery, ...).\n"
                     )
                     }
-                    ,
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            )
+,
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
             gpt_return = response.choices[0].message.content
             start_json = gpt_return.find("{")
             end_json = gpt_return.rfind("}") + 1 
@@ -166,304 +195,168 @@ class PeopleSearch(Search):
             print(f"Error in chat_gpt: {e}")
             return {}
 
-
-
     def search(self, query):
         try:
-            response = self.es.search(index="candidates", body=query, size=10000)
+            response = self.es.search(index="candidates-dev", body=query, size=10000)
             return response
         except Exception as e:
             print(f"Error searching documents: {e}")
             return {}
 
-    def search_all_data(self):
-        try:
-            query = {
-                "query": {
-                    "match_all": {}
-                }
-            }
 
-
-            response = self.search(query)
-
-            if 'hits' in response and 'hits' in response['hits']:
-                documents = [hit['_source'] for hit in response['hits']['hits']]
-                return documents
-            else:
-                print("No documents found or unexpected response structure.")
-                return []
-
-        except Exception as e:
-            print(f"Error retrieving all data: {e}")
-            return []
-
-    def detect_publication_type(self, prompt: str) -> str:
-        p = prompt.lower()
-        if "journal" in p:
-            return "journal_publications"
-        if "book" in p:
-            return "book_publications"
-        if "other" in p:
-            return "other_publications"
-        if "grant" in p:  # <--- allow specifically requesting "grant"
-            return "grant_research"
-        if "research" in p or "publication" in p or "paper" in p:
-            return "all"
-        return "all"
-
-    def search_in_level_two_data(self, fields):
+    def search_by_field(self, field, value, key_metrics):
         """
-        Search for values in one or more fields within `level_two_data`.
-
-        Now supports multiple values for the SAME field:
-            e.g. { "education.education_institution": ["Harvard", "MIT"] }
-        This will create two `nested` queries in a must array:
-            must: [ {match -> "Harvard"}, {match -> "MIT"} ]
-        thus requiring BOTH to match in the top-level doc.
+        Search for documents in Elasticsearch by a given field and value, 
+        incorporating additional filters for key_metrics. 
+        If field or value is None, the query will only include key_metrics.
         """
+        fuzzy_search_fields = ["career_item.career_role", "education.education_degree", "grant_research.grant_title", 
+                        "other_publications.other_publication_title", "journal_publications.journal_publication_title", 
+                        "book_publications.book_publication_title", "education.education_department"]
         try:
-            must_conditions = []
-
-            for field_path, value in fields.items():
-                # field_path e.g. "education.education_institution"
-                nested_path = field_path.split(".")[0]  # e.g. "education"
-
-                # If 'value' is a list of strings => create multiple must sub-queries
-                if isinstance(value, list):
-                    for val in value:
-                        must_conditions.append({
-                            "nested": {
-                                "path": f"level_two_data.{nested_path}",
-                                "query": {
-                                    "match": {
-                                        f"level_two_data.{field_path}": {
-                                            "query": val,
-                                            "fuzziness": "AUTO",
-                                            "operator": "and"
-                                        }
-                                    }
-                                }
-                            }
-                        })
-                # If 'value' is a single string
-                elif isinstance(value, str):
-                    must_conditions.append({
-                        "nested": {
-                            "path": f"level_two_data.{nested_path}",
-                            "query": {
-                                "match": {
-                                    f"level_two_data.{field_path}": {
-                                        "query": value,
-                                        "fuzziness": "AUTO",
-                                        "operator": "and"
-                                    }
-                                }
+            key_metrics_filters = []
+            if key_metrics:
+                if "yoe" in key_metrics:
+                    key_metrics_filters.append({
+                        "range": {
+                            "key_metrics.yoe": {
+                                "gte": key_metrics["yoe"]
                             }
                         }
                     })
-                else:
-                    print(f"Ignoring field '{field_path}' because its value is neither list nor string: {value}")
-
-            # Build final bool query
-            query = {
-                "query": {
-                    "bool": {
-                        "must": must_conditions
+                if "location" in key_metrics:
+                    key_metrics_filters.append({
+                        "term": {
+                            "key_metrics.location.keyword": key_metrics["location"]
+                        }
+                    })
+            print(key_metrics_filters)
+            # If field or value is None, return a query with only key_metrics filters
+            if field is None or value is None:
+                if not key_metrics_filters:
+                    return []  # No query can be constructed
+                query = {
+                    "query": {
+                        "bool": {
+                            "must": key_metrics_filters
+                        }
                     }
                 }
-            }
+                response = self.search(query)
+                return [hit['_source'] for hit in response.get('hits', {}).get('hits', [])]
 
-            response = self.search(query)
-
-            # Parse and return the results
-            if 'hits' in response and 'hits' in response['hits']:
-                return [hit['_source'] for hit in response['hits']['hits']]
-            else:
-                print("No documents found for the given fields in level_two_data.")
-                return []
-
-        except Exception as e:
-            print(f"Error during search_in_level_two_data: {e}")
-            return []
-
-    def search_with_prompt(self, prompt):
-        """
-        If detect_publication_type == 'all', replicate the parsed publication fields
-        across multiple publication categories (journal, book, other),
-        while still including the non-publication fields (like career_item, education, etc.)
-        in each search. Then combine results.
-        """
-        try:
-            publication_type = self.detect_publication_type(prompt)
-            parsed_fields = self.chat_gpt(prompt)
-
-            print("Parsed fields (GPT):", parsed_fields)
-
-            if not parsed_fields or "l2" not in parsed_fields or not parsed_fields["l2"]:
-                print("No valid fields parsed from the prompt.")
-                return []
-
-            publication_prefixes = {"journal_publications", "book_publications", "other_publications", "grant_research"}
-
-            publication_fields = {}     # e.g. "journal_publications.journal_publication_title": "Breast cancer"
-            non_publication_fields = {} # e.g. "career_item.career_institution": "Harvard Medical School"
-
-            for field_path, value in parsed_fields["l2"].items():
-                top_category = field_path.split(".")[0]  # e.g. "career_item"
-                if top_category in publication_prefixes:
-                    publication_fields[field_path] = value
-                else:
-                    non_publication_fields[field_path] = value
-
-
-            if publication_type != "all":
-                print(f"\nUser specifically mentioned '{publication_type}'; searching only in that category.\n")
-
-                l2_results = self.search_in_level_two_data(parsed_fields["l2"])
-                print(f"L2 results: Found {len(l2_results)} documents for {publication_type}.")
-                return l2_results
-
-            print("\nUser was vague => replicate across [journal_publications, book_publications, other_publications].\n")
-
-            subfield_map = {
-                "journal_publications": "journal_publication_title",
-                "book_publications": "book_publication_title",
-                "other_publications": "publication_title",
-                "grant_research": "grant_title"
-            }
-
-            categories = list(subfield_map.keys())
-            all_combined_results = []
-
-            pub_values = list(publication_fields.values())
-
-            for cat in categories:
-                l2_for_cat = dict(non_publication_fields)
-
-
-                for pub_val in pub_values:
-                    new_key = f"{cat}.{subfield_map[cat]}"
-                    l2_for_cat[new_key] = pub_val
-
-                cat_results = self.search_in_level_two_data(l2_for_cat)
-                print(f"  -> Found {len(cat_results)} docs for {cat}")
-                all_combined_results.extend(cat_results)
-
-            unique_docs = {
-                json.dumps(doc, sort_keys=True): doc
-                for doc in all_combined_results
-            }
-            final_results = list(unique_docs.values())
-
-            print(f"\nCombined L2 results: Found {len(final_results)} unique documents across all publication types.")
-            return final_results
-
-        except Exception as e:
-            print(f"Error in search_with_prompt: {e}")
-            return []
-        
-    def search_by_field(self, field, value):
-        try:
+            # Build the query for the provided field
             nested_path = ".".join(field.split(".")[:-1])
 
-            # Specialized handling for education institution and other sensitive fields
-            if "education_institution" in field:
+
+            print(field.split(".")[-1])
+            if field in fuzzy_search_fields:
+                # Use fuzzy search for allowed fields
                 if isinstance(value, list):
                     query = {
                         "query": {
-                            "nested": {
-                                "path": nested_path,
-                                "query": {
-                                    "bool": {
-                                        "should": [
-                                            {
-                                                "match_phrase": {
-                                                    field: {
-                                                        "query": v,
-                                                        "slop": 2  # Allow reordering
-                                                    }
-                                                }
-                                            } for v in value
-                                        ],
-                                        "minimum_should_match": 1
-                                    }
-                                }
-                            }
-                        }
-                    }
-                else:
-                    query = {
-                        "query": {
-                            "nested": {
-                                "path": nested_path,
-                                "query": {
-                                    "bool": {
-                                        "must": {
-                                            "match_phrase": {
-                                                field: {
-                                                    "query": value,
-                                                    "slop": 2
+                            "bool": {
+                                "must": key_metrics_filters + [
+                                    {
+                                        "nested": {
+                                            "path": nested_path,
+                                            "query": {
+                                                "bool": {
+                                                    "should": [
+                                                        {
+                                                            "match": {
+                                                                field: {
+                                                                    "query": v,
+                                                                    "fuzziness": "AUTO",
+                                                                    "operator": "and"
+                                                                }
+                                                            }
+                                                        } for v in value
+                                                    ],
+                                                    "minimum_should_match": 1
                                                 }
                                             }
-                                        },
-                                        "should": {
-                                            "match": {
-                                                field: {
-                                                    "query": value,
-                                                    "fuzziness": "AUTO"
-                                                }
-                                            }
-                                        },
-                                        "minimum_should_match": 1
-                                    }
-                                }
-                            }
-                        }
-                    }
-            else:  # Default behavior for other fields
-                if isinstance(value, list):
-                    query = {
-                        "query": {
-                            "nested": {
-                                "path": nested_path,
-                                "query": {
-                                    "bool": {
-                                        "should": [
-                                            {
-                                                "match": {
-                                                    field: {
-                                                        "query": v,
-                                                        "fuzziness": "AUTO",
-                                                        "operator": "or"
-                                                    }
-                                                }
-                                            } for v in value
-                                        ],
-                                        "minimum_should_match": 1
-                                    }
-                                }
-                            }
-                        }
-                    }
-                else:
-                    query = {
-                        "query": {
-                            "nested": {
-                                "path": nested_path,
-                                "query": {
-                                    "match": {
-                                        field: {
-                                            "query": value,
-                                            "fuzziness": "AUTO",
-                                            "operator": "and"
                                         }
                                     }
-                                }
+                                ]
                             }
                         }
                     }
-
+                else:
+                    query = {
+                        "query": {
+                            "bool": {
+                                "must": key_metrics_filters + [
+                                    {
+                                        "nested": {
+                                            "path": nested_path,
+                                            "query": {
+                                                "match": {
+                                                    field: {
+                                                        "query": value,
+                                                        "fuzziness": "AUTO",
+                                                        "operator": "and"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+            else:
+                # Use match_phrase for exact matches for all other fields
+                if isinstance(value, list):
+                    query = {
+                        "query": {
+                            "bool": {
+                                "must": key_metrics_filters + [
+                                    {
+                                        "nested": {
+                                            "path": nested_path,
+                                            "query": {
+                                                "bool": {
+                                                    "should": [
+                                                        {
+                                                            "match_phrase": {
+                                                                field: {
+                                                                    "query": v
+                                                                }
+                                                            }
+                                                        } for v in value
+                                                    ],
+                                                    "minimum_should_match": 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                else:
+                    query = {
+                        "query": {
+                            "bool": {
+                                "must": key_metrics_filters + [
+                                    {
+                                        "nested": {
+                                            "path": nested_path,
+                                            "query": {
+                                                "match_phrase": {
+                                                    field: {
+                                                        "query": value
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+            # Execute the search query
             response = self.search(query)
             return [hit['_source'] for hit in response.get('hits', {}).get('hits', [])]
 
@@ -472,28 +365,37 @@ class PeopleSearch(Search):
             return []
 
 
-
     def search_with_prompt(self, prompt):
+
+        sort_prestige = True
         try:
             parsed_fields = self.chat_gpt(prompt)
 
-            if not parsed_fields or "l2" not in parsed_fields or not parsed_fields["l2"]:
+            key_metrics = parsed_fields.get("key_metrics", {})
+            l2_fields = parsed_fields.get("l2", {})
+
+            if not l2_fields and not key_metrics:
                 print("No valid fields parsed from the prompt.")
                 return []
-
-            parsed_fields = parsed_fields["l2"]
             field_matches = {}
-            # relevant_career_and_publication_fields = [
-            #     "career_item.career_institution", 
-            #     "career_item.career_role", 
-            #     "journal_publications.journal_publication_title",
-            #     "book_publications.book_publication_title",
-            #     "other_publications.other_publication_title",
-            # ]
 
-            # Search each field individually and track matches
-            for field, value in parsed_fields.items():
-                documents = self.search_by_field(f"level_two_data.{field}", value)
+            if not l2_fields:
+                documents = self.search_by_field(None, None, key_metrics)
+                for doc in documents:
+                    doc_id = doc.get("data", {}).get("orcid_id")
+                    if doc_id not in field_matches:
+                        field_matches[doc_id] = {"document": doc, "matched_fields": set()}
+                return documents
+
+            if l2_fields.get('education.education_institution') is not None:
+                sort_prestige = True
+
+            for field, value in l2_fields.items():
+                print(value)
+                if '[' in value and ']' in value:
+                    value = list(map(str.strip, value[1:-1].split(',')))
+                print(type(value))
+                documents = self.search_by_field(f"level_two_data.{field}", value, key_metrics)
                 print(f"Found {len(documents)} documents for field '{field}' with value '{value}'.")
                 for doc in documents:
                     doc_id = doc.get("data", {}).get("orcid_id")
@@ -511,7 +413,7 @@ class PeopleSearch(Search):
                 doc = match_info["document"]
                 matched_fields = match_info["matched_fields"]
                 matched_fields_count = len(matched_fields)
-                doc["matched"] = matched_fields_count
+                doc["matched"] = matched_fields_count + doc.get('key_metrics', {}).get('prestige_score', 0) if sort_prestige else matched_fields_count
 
                 # Categorize documents based on matched fields
                 has_career_match = any(field.startswith("career_item.career_role") for field in matched_fields)
@@ -542,3 +444,11 @@ class PeopleSearch(Search):
         except Exception as e:
             print(f"Error in search_with_prompt: {e}")
             return []
+        
+# if __name__ == '__main__':
+#     ps = PeopleSearch()
+#     prompt = "I am looking  for someone with over 10 years of experience who is currently in america and graduated from harvard or MIT and works as a neurosurgeon"
+#     results = ps.search_with_prompt(prompt)
+#     print("FINAL SEARCH RESULTS:", len(results))
+#     with open("l2_results.json", "w") as file:
+#         json.dump(results, file, indent=2)

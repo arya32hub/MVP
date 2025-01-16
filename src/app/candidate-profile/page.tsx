@@ -75,7 +75,7 @@ const CandidateProfileScreen = () => {
         <></>
       )}
 
-      <CandidateProfile.Profile user={profile.data} />
+      <CandidateProfile.Profile user={profile} />
       <CandidateProfile.Bio
         levelTwoData={profile.level_two_data}
         tiering={tiering}

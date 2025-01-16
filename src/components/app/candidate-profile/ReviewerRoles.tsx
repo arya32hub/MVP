@@ -16,10 +16,10 @@ const ReviewerRoles = ({
       {roles.map((role, index) => (
         <div key={index} className="flex flex-col gap-2">
           <Text.BodySmall className="font-semibold text-main-blue">
-            {role.reviewer_role}
+          {role.reviewer_organization}
           </Text.BodySmall>
           <Text.BodySmall className="text-tornado">
-            {role.reviewer_organization}, {role.reviewer_end_date}
+            {role.reviewer_end_date}
           </Text.BodySmall>
         </div>
       ))}
