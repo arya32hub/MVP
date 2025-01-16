@@ -150,7 +150,7 @@ export default function Search() {
           )}
           {isFetching ? (
             <div className="flex h-full flex-col items-center justify-center">
-              <div className="flex animate-bounce flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md">
+              <div className="flex animate-bounce flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md transition-all duration-200">
                 <LoadingSpinner />
                 <Text.BodyMedium className="flex flex-row gap-1 text-gray-800">
                   {loadingMessages[loadingStep].message}

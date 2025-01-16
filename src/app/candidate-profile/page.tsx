@@ -55,11 +55,17 @@ const CandidateProfileScreen = () => {
         <></>
       )}
 
-      <CandidateProfile.Profile user={profile} />
-      <CandidateProfile.Bio
-        levelTwoData={profile.level_two_data}
-        tiering={tiering}
-      />
+      {profile ? (
+        <>
+          <CandidateProfile.Profile user={profile} />
+          <CandidateProfile.Bio
+            levelTwoData={profile.level_two_data}
+            tiering={tiering}
+          />
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
