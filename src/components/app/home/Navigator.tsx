@@ -24,14 +24,14 @@ const Navigator: React.FC = () => {
 
       <Link href={"/search"}>
         <div
-          className={`flex h-12 w-12 flex-row items-center justify-center rounded-xl ${pathName === "/search" ? "bg-[#F1F7FF]" : "bg-white"} transition-all duration-200 hover:scale-110`}
+          className={`flex h-12 w-12 flex-row items-center justify-center rounded-xl hover:shadow-md ${pathName === "/search" ? "bg-[#F1F7FF]" : "bg-white"} transition-all duration-200 hover:scale-110`}
         >
           <Icons.UserSearch />
         </div>
       </Link>
       <Link href={"/dashboard"}>
         <div
-          className={`flex h-12 w-12 flex-row items-center justify-center rounded-xl ${pathName === "/dashboard" ? "bg-[#F1F7FF]" : "bg-white"} transition-all duration-200 hover:scale-110`}
+          className={`flex h-12 w-12 flex-row items-center justify-center rounded-xl hover:shadow-md ${pathName === "/dashboard" ? "bg-[#F1F7FF]" : "bg-white"} transition-all duration-200 hover:scale-110`}
         >
           <Icons.DashboardSquareSetting />
         </div>

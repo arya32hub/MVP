@@ -34,7 +34,7 @@ const SmallBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
 }) => {
   return (
     <button
-      className={`h-[33px] rounded-lg border-[1px] px-3.5 py-2 ${className}`}
+      className={`h-[33px] rounded-lg border-[1px] px-3.5 py-2 transition-all duration-150 hover:shadow-xl active:scale-95 active:opacity-80 ${className}`}
       onClick={() => {
         if (onClick) onClick();
       }}
@@ -51,7 +51,7 @@ const BigBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
 }) => {
   return (
     <button
-      className={`h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
+      className={`h-[43px] rounded-lg border-[1px] px-3 py-5 transition-all duration-150 hover:shadow-xl active:scale-95 ${className}`}
       onClick={() => {
         if (onClick) onClick();
       }}

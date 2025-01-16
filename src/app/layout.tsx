@@ -1,7 +1,7 @@
 "use client";
 
 import { Navigator, Profile } from "@/components";
-import { AppStore, store } from "@/lib";
+import { AppStore, store } from "@/store";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 // import type { Metadata } from "next";
 import { useRef } from "react";

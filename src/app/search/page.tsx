@@ -15,7 +15,7 @@ import {
   SearchBar,
   Text,
 } from "@/components";
-import { useSearchUserQuery } from "@/lib/reducers";
+import { useSearchUserQuery } from "@/store/reducers";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -150,7 +150,7 @@ export default function Search() {
           )}
           {isFetching ? (
             <div className="flex h-full flex-col items-center justify-center">
-              <div className="flex flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md">
+              <div className="flex animate-bounce flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md">
                 <LoadingSpinner />
                 <Text.BodyMedium className="flex flex-row gap-1 text-gray-800">
                   {loadingMessages[loadingStep].message}

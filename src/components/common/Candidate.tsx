@@ -71,7 +71,7 @@ const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
   ...schema
 }) => {
   return (
-    <div className="flex flex-row rounded-2xl bg-white p-4 text-main-blue shadow-md">
+    <div className="flex flex-row rounded-2xl bg-white p-4 text-main-blue shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg">
       <div className="flex w-full flex-row items-center justify-between gap-4">
         <div className="flex flex-row items-center gap-4">
           <Checkbox.Default />

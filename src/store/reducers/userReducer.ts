@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const userApi = createApi({
   reducerPath: "/userApi",
   baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:8000` }),
-  tagTypes: ["search-user"],
+  tagTypes: ["search-user", "get_user_data"],
   endpoints: (builder) => ({
     searchUser: builder.query<
       User.Search.ISearchApiResponse,
@@ -19,8 +19,20 @@ const userApi = createApi({
         { type: "search-user", id: keyword },
       ],
     }),
+    getCandidateProfile: builder.query<User.Search.Schema, { orcidId: string }>(
+      {
+        query: ({ orcidId }) => ({
+          url: "get_user_data",
+          method: "POST",
+          body: { text: orcidId },
+        }),
+        providesTags: (result, error, { orcidId }) => [
+          { type: "get_user_data", id: orcidId },
+        ],
+      },
+    ),
   }),
 });
 
 export { userApi };
-export const { useSearchUserQuery } = userApi; // Export the generated hook
+export const { useSearchUserQuery, useGetCandidateProfileQuery } = userApi; // Export the generated hook
