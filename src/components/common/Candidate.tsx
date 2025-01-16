@@ -11,9 +11,9 @@ const generateAvatar = (initials: string, bgColor: string = "#6A5ACD") => {
       </text>
     </svg>
   `;
-  
+
   // Encode the SVG as Base64 using a UTF-8 encoder
-  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
 };
 
 interface IOnClick {
@@ -29,16 +29,16 @@ const Profile: React.FC<Partial<User.Search.Schema>> = (props) => {
 
   // Generate dynamic avatar with initials
   const avatarSrc = generateAvatar(initials);
-  
+
   return (
     <div className="flex flex-row gap-4">
-        <Image
-          alt="Profile Picture"
-          src={avatarSrc}
-          width={75}
-          height={75}
-          className="h-[75px] w-[75px] rounded-xl object-cover"
-        />
+      <Image
+        alt="Profile Picture"
+        src={avatarSrc}
+        width={75}
+        height={75}
+        className="h-[75px] w-[75px] rounded-xl object-cover"
+      />
       <div className="flex w-36 flex-col gap-[10px]">
         <div className="flex flex-row items-baseline gap-[7px]">
           <Text.H3 className="text-gray-900">
@@ -85,18 +85,15 @@ const Candidate: React.FC<IOnClick & Partial<User.Search.Schema>> = ({
             {schema.level_two_data?.grant_research.length}+ Grants received
           </Chips>
           <Chips>
-            {schema.level_two_data?.journal_publications.length}+ Journal Publications
+            {schema.level_two_data?.journal_publications.length}+ Journal
+            Publications
           </Chips>
-          <Chips>
-            {schema.key_metrics?.yoe}+ Years of Experience
-          </Chips>
+          <Chips>{schema.key_metrics?.yoe}+ Years of Experience</Chips>
         </div>
         <Divider />
         <div className="flex h-full flex-col items-end justify-between">
           <Bookmark />
-          <Button.SecondarySmall onClick={onClick}>
-            View
-          </Button.SecondarySmall>
+          <Button.SecondarySmall onClick={onClick}>View</Button.SecondarySmall>
         </div>
       </div>
     </div>

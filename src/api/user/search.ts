@@ -7,23 +7,19 @@ type TGetCandidateProfile = (orcidId: string) => Promise<User.Search.Schema>;
 type TTieringProfile = (orcidId: string) => Promise<User.Search.Schema>;
 
 const search: TSearch = async (keyword: string) => {
-  try {
-    const response = await axios.post(
-      `http://localhost:8000/process_input`,
-      {
-        text: keyword,
+  const response = await axios.post(
+    `http://localhost:8000/process_input`,
+    {
+      text: keyword,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    },
+  );
 
-    return response.data;
-  } catch (error) {
-    console.log("API ERROR \n", error);
-  }
+  return response.data;
 };
 
 const getCandidateProfile: TGetCandidateProfile = async (orcidId: string) => {

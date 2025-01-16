@@ -50,14 +50,14 @@ const BigBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   onClick,
 }) => {
   return (
-    <div
+    <button
       className={`h-[43px] rounded-lg border-[1px] px-3 py-5 ${className}`}
       onClick={() => {
         if (onClick) onClick();
       }}
     >
       {children}
-    </div>
+    </button>
   );
 };
 
@@ -215,6 +215,7 @@ const IceCube: React.FC<IProps & ISvgProps> = ({
 };
 
 export {
+  GraySmall,
   IceCube,
   Primary,
   PrimaryBig,
@@ -224,5 +225,4 @@ export {
   Secondary,
   SecondaryBig,
   SecondarySmall,
-  GraySmall,
 };

@@ -2,7 +2,7 @@
 import { ComponentType, PropsWithChildren, useState } from "react";
 import { Button } from ".";
 import { Icons } from "..";
-import React from 'react';
+import React from "react";
 
 interface IProps {
   placeHolder: string;
@@ -87,9 +87,6 @@ const MainBlue: React.FC<IProps & IOnClick & ISetValue> = ({
     />
   );
 };
-
-
-
 
 const MountainLake: React.FC<IProps & IOnClick & ISetValue> = ({
   placeHolder,

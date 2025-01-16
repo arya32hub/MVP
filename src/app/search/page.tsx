@@ -1,6 +1,5 @@
 "use client";
 
-import { API } from "@/api";
 import {
   BookOpen,
   FilterMailSquare,
@@ -16,7 +15,7 @@ import {
   SearchBar,
   Text,
 } from "@/components";
-import { User } from "@/model";
+import { useSearchUserQuery } from "@/lib/reducers";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -71,17 +70,13 @@ const SearchSection: React.FC<ISearchSectionProps> = ({ text }) => {
   const Footer: React.FC = () => (
     <div className="mx-[9px] mt-3 flex flex-row items-center justify-between">
       <Checkbox.All isChecked />
-      <Button.Secondary
-        isActive={false}
-        text={"Save"}
-        className="max-w-[79px]"
-      />
+      <Button.Primary isActive={false} text={"Save"} className="max-w-[79px]" />
     </div>
   );
   return (
     <SearchBar.Container Footer={Footer}>
       <Button.IceCube svgLeft={SearchFocus} text={"Advanced Search"} />
-      <SearchBar.MountainLake
+      <SearchBar.MainBlue
         placeHolder="Type here..."
         value={text}
         onClick={navigateToSearch}
@@ -92,12 +87,6 @@ const SearchSection: React.FC<ISearchSectionProps> = ({ text }) => {
 
 export default function Search() {
   const router = useRouter();
-  const [response, setResponse] = useState<
-    User.Search.ISearchApiResponse | undefined
-  >();
-
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
 
   const [loadingStep, setLoadingStep] = useState(0);
   const [dots, setDots] = useState(""); // State for animated dots
@@ -107,16 +96,23 @@ export default function Search() {
     { message: "Ranking users ", duration: 4000 }, // 3 seconds
   ];
 
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+
+  const { data, isFetching } = useSearchUserQuery({
+    keyword: query ? query : "",
+  });
+
   // Handle loading step transitions
   useEffect(() => {
-    if (loadingStep < loadingMessages.length - 1 && !response) {
+    if (isFetching && loadingStep < loadingMessages.length - 1) {
       const timeout = setTimeout(() => {
         setLoadingStep((prev) => prev + 1);
       }, loadingMessages[loadingStep].duration);
 
       return () => clearTimeout(timeout);
     }
-  }, [loadingStep, response]);
+  }, [isFetching]);
 
   // Handle dot animation
   useEffect(() => {
@@ -127,18 +123,6 @@ export default function Search() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (query !== null) {
-      API.User.search(query).then((response) => {
-        setResponse(response);
-      });
-    }
-    return () => {
-      setResponse(undefined);
-      setLoadingStep(0);
-    };
-  }, [query]);
-
   const navigateToCandidateProfile = (orcidId: string) => {
     router.push(`/candidate-profile?orcid_id=${orcidId}`);
   };
@@ -146,21 +130,25 @@ export default function Search() {
   return (
     <div className="relative mx-16 flex flex-row gap-4 px-[131px]">
       <Filter />
-
       <div className="flex-1">
         <SearchSection text={query ? query : undefined} />
         <div className="relative mt-4 flex h-full flex-col gap-4">
-          {response ? (
-            response.results.map((results) => (
-              <Candidate
-                key={results.data.orcid_id}
-                onClick={() =>
-                  navigateToCandidateProfile(results.data.orcid_id)
-                }
-                {...results}
-              />
-            ))
+          {!isFetching && data ? (
+            <>
+              {data.results.map((results) => (
+                <Candidate
+                  key={results.data.orcid_id}
+                  onClick={() =>
+                    navigateToCandidateProfile(results.data.orcid_id)
+                  }
+                  {...results}
+                />
+              ))}
+            </>
           ) : (
+            <></>
+          )}
+          {isFetching ? (
             <div className="flex h-full flex-col items-center justify-center">
               <div className="flex flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md">
                 <LoadingSpinner />
@@ -170,6 +158,8 @@ export default function Search() {
                 </Text.BodyMedium>
               </div>
             </div>
+          ) : (
+            <></>
           )}
         </div>
       </div>

@@ -10,7 +10,9 @@ const OtherPublications = ({
 }) => {
   if (!publications.length || !title) return null;
 
-  const filteredPublications = publications.filter((pub) => pub.publication_title);
+  const filteredPublications = publications.filter(
+    (pub) => pub.publication_title,
+  );
 
   return (
     <div className="flex flex-1 flex-col gap-4">
