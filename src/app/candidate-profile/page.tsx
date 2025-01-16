@@ -33,10 +33,6 @@ const CandidateProfileScreen = () => {
     return <Text.Body className="text-red-500">{error}</Text.Body>;
   }
 
-  if (!profile) {
-    return <Text.Body className="text-gray-500">Profile not found.</Text.Body>;
-  }
-
   return (
     <div className="mx-16 flex h-screen flex-row gap-4 px-[131px]">
       {loading ? (
