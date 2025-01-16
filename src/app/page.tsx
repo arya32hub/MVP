@@ -1,7 +1,6 @@
 "use client";
 
-import { SearchFocus } from "@/assets/svg";
-import { Button, SearchBar } from "@/components";
+import { SearchBar } from "@/components";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -56,7 +55,7 @@ const Home = () => {
             <div
               key={index}
               onClick={() => handleSuggestionClick(suggestion)} // Set suggestion text
-              className="cursor-pointer rounded-[34px] border-[1px] border-[#87AEEE] bg-white px-4 py-2 font-[Inter] text-[14px] font-normal text-[#7B7C7E] hover:bg-[#E6F1FF] truncate-box"
+              className="truncate-box cursor-pointer rounded-[34px] border-[1px] border-[#87AEEE] bg-white px-4 py-2 font-[Inter] text-[14px] font-normal text-[#7B7C7E] hover:bg-[#E6F1FF]"
               title={suggestion} // Optional: Display full text on hover as tooltip
             >
               {suggestion}

@@ -11,13 +11,7 @@ const Profile = ({ user }: { user: User.Search.Schema }) => {
     (firstName.charAt(0).toUpperCase() || "") +
     (lastName.charAt(0).toUpperCase() || "");
 
-  // Generate dynamic avatar with initials
   const avatarSrc = generateAvatar(initials);
-  const location = user.key_metrics?.location?.join(", ");
-
-  console.log("User:", user); // Visible in the browser's developer console
-  console.log("Key Metrics:", user.key_metrics); // Visible in the browser's developer console
-  console.log("location", location);
 
   return (
     <div>
@@ -69,4 +63,3 @@ const Profile = ({ user }: { user: User.Search.Schema }) => {
 };
 
 export { Profile };
-
