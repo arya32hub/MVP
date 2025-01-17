@@ -56,18 +56,6 @@ const TieringSection = ({
         </div>
       )}
 
-      {/* Estimated Salary Range */}
-      {/* {tiering.fmv && (
-        <div className="flex flex-col gap-4">
-          <Text.BodySmall className="font-semibold text-main-blue">
-            Estimated Salary Range
-          </Text.BodySmall>
-          <Text.BodySmall className="text-tornado">
-            Based on the profile and tiering, we estimate that the salary should be in the
-            range of {tiering.fmv}
-          </Text.BodySmall>
-        </div>
-      )} */}
     </div>
   );
 };
