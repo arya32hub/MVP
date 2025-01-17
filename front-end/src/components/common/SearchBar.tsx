@@ -1,8 +1,13 @@
 "use client";
-import { ComponentType, PropsWithChildren, useState } from "react";
+import React, {
+  ComponentType,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button } from ".";
 import { Icons } from "..";
-import React from "react";
 
 interface IProps {
   placeHolder: string;
@@ -30,16 +35,26 @@ interface ISetValue {
 const SearchFieldBase: React.FC<
   IProps & ISearchButton & IOnChange & ISetValue
 > = ({ placeHolder, SearchButton, onChange, value }) => {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; //
+    }
+  }, [value]);
+
   return (
-    <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] border-gray-200 pl-4">
-      <input
-        className="flex-1 bg-white px-4 py-2 text-black focus:outline-none"
-        type="text"
+    <div className="flex-3 ml-2 flex flex-1 flex-row items-center rounded-2xl border-[1px] border-gray-200 bg-white pl-4 transition-all duration-200 ease-in-out focus-within:scale-105 focus-within:shadow-md hover:scale-105 hover:shadow-md">
+      <textarea
+        className="flex-1 resize-none bg-white px-4 py-2 text-black focus:outline-none"
+        ref={textareaRef}
         placeholder={placeHolder}
+        rows={1}
         onChange={(e) => {
           if (onChange) onChange(e.target.value);
         }}
-        defaultValue={value}
+        value={value}
       />
       <SearchButton />
     </div>
