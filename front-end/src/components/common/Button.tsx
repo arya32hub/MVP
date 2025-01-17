@@ -27,6 +27,10 @@ interface IActiveProps {
   isActive?: boolean;
 }
 
+interface IDisabledProps {
+  disabled?: boolean;
+}
+
 const SmallBase: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
   children,
   className,
@@ -121,17 +125,23 @@ const PrimarySmallLight: React.FC<PropsWithChildren & IClassNameProps> = ({
   );
 };
 
-const PrimaryBig: React.FC<PropsWithChildren & IClassNameProps & IOnClick> = ({
-  children,
-  className,
-  onClick,
-}) => {
+const PrimaryBig: React.FC<
+  PropsWithChildren & IClassNameProps & IOnClick & IDisabledProps
+> = ({ children, className, onClick, disabled }) => {
   return (
     <BigBase
-      className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] border-main-blue bg-main-blue px-5 py-3 ${className}`}
-      onClick={onClick}
+      className={`flex h-[43px] flex-col items-center justify-center rounded-lg border-[1px] ${
+        disabled ? "bg-gray-300 cursor-not-allowed" : "bg-main-blue"
+      } px-5 py-3 ${className}`}
+      onClick={disabled ? undefined : onClick} // Prevent click when disabled
     >
-      <BodyMedium className="text-center text-white">{children}</BodyMedium>
+      <BodyMedium
+        className={`text-center ${
+          disabled ? "text-gray-500" : "text-white"
+        }`}
+      >
+        {children}
+      </BodyMedium>
     </BigBase>
   );
 };

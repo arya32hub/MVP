@@ -1,0 +1,16 @@
+Job Title,Geographic Area,10th Percentile,25th Percentile,Mean,75th Percentile,90th Percentile,Value in
+Researcher Cancer,Spain Average,"  28,520 ","  35,003 ","  42,123 ","  53,910 ","  64,048 ",EUR
+Researcher Cancer,France Average,"  30,440 ","  37,327 ","  44,893 ","  57,536 ","  68,411 ",EUR
+Researcher Cancer,United States Average,"  54,430 ","  66,720 ","  80,218 ","  102,880 ","  122,373 ",USD
+Nurse,Spain Average,"  26,181 ","  32,354 ","  39,134 ","  50,276 ","  59,861 ",EUR
+Nurse,France Average,"  36,846 ","  45,495 ","  54,994 ","  70,752 ","  84,307 ",EUR
+Nurse,United States Average,"  64,068 ","  79,076 ","  95,559 ","  123,024 ","  146,648 ",USD
+Oncologist,Spain Average,"  89,111 ","  115,444 ","  144,368 ","  202,463 ","  252,434 ",EUR
+Oncologist,France Average,"  111,622 ","  144,480 ","  180,570 ","  253,589 ","  316,397 ",EUR
+Oncologist,United States Average,"  228,416 ","  295,531 ","  369,248 ","  518,908 ","  647,641 ",USD
+Neurosurgeon,Spain Average,"  115,182 ","  160,837 ","  210,983 ","  356,667 ","  481,980 ",EUR
+Neurosurgeon,France Average,"  144,285 ","  201,285 ","  263,891 ","  446,719 ","  603,983 ",EUR
+Neurosurgeon,United States Average,"  322,585 ","  449,821 ","  589,572 ","  998,686 ","  1,350,595 ",USD
+Physician,Spain Average,"  66,873 ","  85,506 ","  105,971 ","  143,288 ","  175,388 ",EUR
+Physician,France Average,"  83,766 ","  107,012 ","  132,545 ","  179,473 ","  219,839 ",EUR
+Physician,United States Average,"  187,205 ","  239,058 ","  296,011 ","  401,082 ","  491,461 ",USD

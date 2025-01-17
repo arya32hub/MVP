@@ -4,9 +4,10 @@ import axios from "axios";
 
 type TSearch = (keyword: string) => Promise<User.Search.ISearchApiResponse>;
 type TGetCandidateProfile = (orcidId: string) => Promise<User.Search.Schema>;
-type TTieringProfile = (orcidId: string) => Promise<User.Search.Schema>;
+type TTieringProfile = (orcidId: string) => Promise<User.Search.FullTier>;
 
 const search: TSearch = async (keyword: string) => {
+  console.log("Searching for:", keyword);
   const response = await axios.post(
     `http://localhost:8000/process_input`,
     {

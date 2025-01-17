@@ -13,7 +13,7 @@ const CandidateProfileScreen = () => {
   const {
     data: profile,
     isFetching: loading,
-    error: profileError,
+    error: profileError, 
   } = useGetCandidateProfileQuery({ orcidId });
   const {
     tiering,
@@ -47,7 +47,7 @@ const CandidateProfileScreen = () => {
             className="animate-bounce"
             onClick={fetchTiering}
           >
-            {tieringLoading ? "Loading..." : "Get Tiering"}
+            {tieringLoading ? "Get Tier" : "Loading..."}
           </Button.PrimarySmall>
         </div>
       )}

@@ -1,3 +1,4 @@
+// Interfaces
 interface Publication {
   publication_title: string;
   publication_end_date: string;
@@ -16,6 +17,11 @@ interface Tiering {
   leadership_editorial?: Tier;
   associations_journals?: Tier;
   total_score: string;
+}
+
+interface FullTier {
+  tiering: Tiering;
+  fmv: string;
 }
 
 interface Education {
@@ -94,12 +100,15 @@ interface Schema {
   data: Data;
   level_two_data: LevelTwoData;
   key_metrics: KeyMetrics;
-  tiering?: Tiering;
+  tiering?: FullTier;
 }
+
 interface ISearchApiResponse {
   query: string;
   results: Schema[];
 }
+
+// Exporting the types
 export type {
   BookPublication,
   CareerItem,
@@ -111,5 +120,8 @@ export type {
   Publication,
   ReviewerRole,
   Schema,
+  FullTier,
   ISearchApiResponse,
+  Tier,
+  Tiering
 };

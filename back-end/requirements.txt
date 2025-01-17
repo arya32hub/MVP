@@ -12,3 +12,6 @@ httpx==0.27.2
 applicationinsights
 tiktoken
 uvicorn
+openpyxl
+pandas
+sentence_transformers

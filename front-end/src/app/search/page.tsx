@@ -32,8 +32,8 @@ const Filter = () => {
           </Text.H3>
         </div>
         <div className="mt-5 flex flex-col gap-3">
-          <Dropdown text={"Select the region"} svgLeft={Location} />
-          <Dropdown text={"Education"} svgLeft={BookOpen} />
+          <Dropdown text={"Select the region"} svgLeft={Location} options={["US"]} />
+          <Dropdown text={"Education"} svgLeft={BookOpen} options={["Harvard"]} />
         </div>
         <div className="mt-5 border-[1px] border-[#F4F4F4F4]" />
         <div className="my-[20px] flex flex-col">
@@ -64,6 +64,7 @@ const SearchSection: React.FC<ISearchSectionProps> = ({ text }) => {
   const router = useRouter();
 
   const navigateToSearch = (query?: string) => {
+    console.log("Navigating to search with query:", query);
     router.replace(`/search?query=${query}`);
   };
 
@@ -91,17 +92,20 @@ export default function Search() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [dots, setDots] = useState(""); // State for animated dots
   const loadingMessages = [
-    { message: "Analyzing query ", duration: 6000 }, // 2 seconds
-    { message: "Finding relevant users ", duration: 10000 }, // 4 seconds
-    { message: "Ranking users ", duration: 4000 }, // 3 seconds
+    { message: "Analyzing query ", duration: 6000 }, // 6 seconds
+    { message: "Finding relevant users ", duration: 10000 }, // 10 seconds
+    { message: "Ranking users ", duration: 4000 }, // 4 seconds
   ];
 
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
 
-  const { data, isFetching } = useSearchUserQuery({
-    keyword: query ? query : "",
+
+  const { data, isFetching, error } = useSearchUserQuery({
+    keyword: query || "",
   });
+
+  console.log("API Call - isFetching:", isFetching, "Data:", data, "Error:", error); // Log API states
 
   // Handle loading step transitions
   useEffect(() => {
@@ -112,8 +116,9 @@ export default function Search() {
 
       return () => clearTimeout(timeout);
     }
-  }, [isFetching]);
+  }, [isFetching, loadingStep]);
 
+  console.log("Loading step:", loadingStep);
   // Handle dot animation
   useEffect(() => {
     const interval = setInterval(() => {
@@ -145,9 +150,7 @@ export default function Search() {
                 />
               ))}
             </>
-          ) : (
-            <></>
-          )}
+          ) : null}
           {isFetching ? (
             <div className="flex h-full flex-col items-center justify-center">
               <div className="flex animate-bounce flex-row items-center justify-center gap-4 rounded-md bg-gray-100 p-3 shadow-md transition-all duration-200">
@@ -158,8 +161,11 @@ export default function Search() {
                 </Text.BodyMedium>
               </div>
             </div>
-          ) : (
-            <></>
+          ) : null}
+          {!isFetching && !data && (
+            <div className="flex items-center justify-center">
+              <Text.BodyMedium>No data found. Try another query.</Text.BodyMedium>
+            </div>
           )}
         </div>
       </div>
