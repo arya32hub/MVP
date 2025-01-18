@@ -1,7 +1,7 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: GLNKDEMO
+  AZURE_WEBAPP_NAME: GLNKDEMO # Replace this with your actual Azure Web App name
 
 on:
   push:
@@ -10,29 +10,35 @@ on:
 
 permissions:
   contents: read
+  packages: write # Required for pushing images to GitHub Container Registry
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # Check out the code
       - uses: actions/checkout@v4
 
+      # Set up Docker Buildx for advanced builds
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+        uses: docker/setup-buildx-action@v3
 
+      # Log in to GitHub Container Registry (ghcr.io)
       - name: Log in to GitHub container registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.DOCKER_REGISTRY_SERVER_PASSWORD }} # Ensure this secret is correctly set in your repo
 
-      - name: Lowercase the repo name and username
+      # Lowercase the repository name for consistency
+      - name: Lowercase the repo name
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
+      # Build and push the Docker container image to GitHub Container Registry
       - name: Build and push container image to registry
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        uses: docker/build-push-action@v5
         with:
           context: ./back-end # Specify the path to the back-end directory as the build context
           file: ./back-end/Dockerfile # Specify the correct path to the Dockerfile
@@ -49,13 +55,15 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Lowercase the repo name and username
+      # Lowercase the repository name for consistency
+      - name: Lowercase the repo name
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
+      # Deploy the Docker image to Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Ensure this secret is correctly set in your repo
           images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
